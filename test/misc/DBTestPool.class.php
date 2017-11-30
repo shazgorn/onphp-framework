@@ -4,7 +4,7 @@
 	final class DBTestPool extends \Onphp\Singleton implements \Onphp\Instantiatable
 	{
 		private $pool = array();
-		
+
 		/**
 		 * @return \Onphp\Test\DBTestPool
 		 */
@@ -12,7 +12,7 @@
 		{
 			return \Onphp\Singleton::getInstance(__CLASS__);
 		}
-		
+
 		protected function __construct(array $dbs = array())
 		{
 			\Onphp\Assert::isArray($dbs);
@@ -30,13 +30,13 @@
 				}
 			}
 		}
-		
+
 		public function disconnect()
 		{
 			foreach ($this->pool as $connector)
 				$connector->disconnect();
 		}
-		
+
 		public function connect($persistent = false)
 		{
 			foreach ($this->pool as $connector) {
@@ -50,7 +50,7 @@
 		public function iterator()
 		{
 			if (empty($this->pool)) {
-				throw new \PHPUnit_Framework_AssertionFailedError("db connections required for test");
+				throw new \PHPUnit\Framework\AssertionFailedError("db connections required for test");
 			}
 			return new DBTestIterator($this->pool);
 		}

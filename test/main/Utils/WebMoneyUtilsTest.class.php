@@ -1,7 +1,7 @@
 <?php
 	namespace Onphp\Test;
 
-	final class WebMoneyUtilsTest extends \PHPUnit_Framework_TestCase
+	final class WebMoneyUtilsTest extends \PHPUnit\Framework\TestCase
 	{
 		/**
 		 * @dataProvider data

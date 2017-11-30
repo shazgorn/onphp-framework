@@ -11,140 +11,140 @@
 
 	namespace Onphp\Test;
 
-	final class EntityProtoConvertersTest extends \PHPUnit_Framework_TestCase
+	final class EntityProtoConvertersTest extends \PHPUnit\Framework\TestCase
 	{
 		public function testDirectoryBinder()
 		{
 			$converter = \Onphp\DirectoryToObjectBinder::create(
 				\Onphp\Singleton::getInstance('\Onphp\Test\EntityProtoDirectoryItem')
 			);
-			
+
 			$directoryContext = ONPHP_TEST_PATH.'main/data/directory';
-			
+
 			$result = $converter->make($directoryContext);
-			
+
 			$this->assertEquals(
 				"wow, it's working!",
 				$result->getInner()->getTextField()
 			);
-			
+
 			$rand = rand();
-			
+
 			$result->setTextField($rand);
-			
+
 			$newDirectoryContext = ONPHP_TEMP_PATH.'tests/main/data/directory';
-			
+
 			$unconverter = \Onphp\ObjectToDirectoryBinder::create(
 				\Onphp\Singleton::getInstance('\Onphp\Test\EntityProtoDirectoryItem')
 			)->
 				setDirectory($newDirectoryContext);
-			
+
 			$unconverter->make($result);
-			
+
 			$this->assertEquals(
 				file_get_contents($directoryContext.'/contents'),
 				file_get_contents($newDirectoryContext.'/contents')
 			);
 		}
-		
+
 		public function testSymlinks()
 		{
 			$this->createContainers();
-			
+
 			$ringDir = ONPHP_TEMP_PATH.'tests/main/data/ring';
-			
+
 			$actual = glob($ringDir.'/*');
-			
+
 			$expected = array(
 				$ringDir.'/contents',
 				$ringDir.'/inner',
 				$ringDir.'/items',
 				$ringDir.'/textField'
 			);
-			
+
 			$this->assertEquals($expected, $actual);
-			
+
 			$actual = glob($ringDir.'/items/*');
-			
+
 			$expected = array(
 				$ringDir.'/items/421',
 				$ringDir.'/items/422',
 				$ringDir.'/items/423',
 				$ringDir.'/items/424'
 			);
-			
+
 			$this->assertEquals($expected, $actual);
-			
+
 			$actual = glob($ringDir.'/items/424/*');
-			
+
 			$expected = array(
 				$ringDir.'/items/424/contents',
 				$ringDir.'/items/424/inner',
 				$ringDir.'/items/424/textField'
 			);
-			
+
 			$this->assertEquals($expected, $actual);
-			
+
 			$this->assertEquals(readlink($ringDir.'/items/424/inner'), $ringDir.'/items/421');
 		}
-		
+
 		public function testReadSymlinks()
 		{
 			$this->createContainers();
-			
+
 			$ringDir = ONPHP_TEMP_PATH.'tests/main/data/ring';
-			
+
 			$converter = \Onphp\DirectoryToObjectBinder::create(
 				\Onphp\Singleton::getInstance('\Onphp\Test\EntityProtoDirectoryItem')
 			);
-			
+
 			$result = $converter->make($ringDir);
-			
+
 			$this->assertNotNull($result);
-			
+
 			$this->assertNotNull($result->getInner());
-			
+
 			$this->assertEquals(421, $result->getInner()->getId());
 			$this->assertEquals(422, $result->getInner()->getInner()->getId());
-			
+
 			$this->assertNotNull($result->getInner()->getInner());
-			
+
 			$newHead = DirectoryItem::create()->setId('newHead')->
 				setInner($result->getInner());
-			
+
 			$newItemTmpDir = ONPHP_TEMP_PATH.'tests/main/data/ring.tmp';
 			$saver = $converter->makeReverseBuilder()->
 				setDirectory($newItemTmpDir);
-			
+
 			$saver->makeList(array($newHead));
-			
+
 			$result->setInner($newHead);
-			
+
 			$saver->
 				setDirectory($ringDir)->
 				make($result);
-			
+
 			$this->assertEquals(
 				readlink($ringDir.'/inner'), $newItemTmpDir.'/newHead'
 			);
 		}
-		
+
 		private function createContainers()
 		{
 			$ringDir = ONPHP_TEMP_PATH.'tests/main/data/ring';
-			
+
 			$converter = \Onphp\ObjectToDirectoryBinder::create(
 				\Onphp\Singleton::getInstance('\Onphp\Test\EntityProtoDirectoryItem')
 			)->
 				setDirectory($ringDir);
-			
+
 			$itemsConverter = $converter->cloneInnerBuilder('items');
-			
+
 			$ringListHead = DirectoryItem::create()->
 				setId('421');
-			
+
 			$result = $itemsConverter->makeList(array($ringListHead));
-			
+
 			$ringListHead->setInner(
 				$items[2] = DirectoryItem::create()->
 				setId('422')->
@@ -158,128 +158,128 @@
 					)
 				)
 			);
-			
+
 			// storing head again to update inner link
 			$items[3] = $ringListHead;
-			
+
 			$result = $itemsConverter->makeList($items);
-			
+
 			$mainContainer = DirectoryItem::create()->
 				setTextField('main container');
-			
+
 			$mainContainer->setInner($ringListHead);
-			
+
 			// storing the container with its link to ring list head
 			$result = $converter->make($mainContainer);
 		}
 	}
-	
+
 	abstract class DirectoryItemBase implements \Onphp\Identifiable
 	{
 		protected $textField;
 		protected $fileName;
 		protected $inner;
 		protected $id;
-		
+
 		public function setId($id)
 		{
 			$this->id = $id;
-			
+
 			return $this;
 		}
-		
+
 		public function getId()
 		{
 			return $this->id;
 		}
-		
+
 		public function setTextField($textField)
 		{
 			$this->textField = $textField;
-			
+
 			return $this;
 		}
-		
+
 		public function getTextField()
 		{
 			return $this->textField;
 		}
-		
+
 		public function setFileName($fileName)
 		{
 			$this->fileName = $fileName;
-			
+
 			return $this;
 		}
-		
+
 		public function getFileName()
 		{
 			return $this->fileName;
 		}
-		
+
 		public function setInner(DirectoryItem $inner)
 		{
 			$this->inner = $inner;
-			
+
 			return $this;
 		}
-		
+
 		public function dropInner()
 		{
 			$this->inner = null;
-			
+
 			return $this;
 		}
-		
+
 		public function getInner()
 		{
 			return $this->inner;
 		}
 	}
-	
+
 	final class DirectoryItem extends DirectoryItemBase
 	{
 		private $items = array();
-		
+
 		public function setItems($items)
 		{
 			$this->items = $items;
-			
+
 			return $this;
 		}
-		
+
 		public function getItems()
 		{
 			return $this->items;
 		}
-		
+
 		public static function create()
 		{
 			return new self;
 		}
 	}
-	
+
 	final class EntityProtoDirectoryItem extends \Onphp\EntityProto
 	{
 		public function className()
 		{
 			return '\Onphp\Test\DirectoryItem';
 		}
-		
+
 		public function getFormMapping()
 		{
 			return array(
 				'items' => \Onphp\Primitive::formsList('items')->
 					of('\Onphp\Test\DirectoryItem')->
 					required(),
-				
+
 				'textField' => \Onphp\Primitive::string('textField')->
 					setMax(256)->
 					optional(),
-				
+
 				'fileName' => \Onphp\Primitive::file('contents')->
 					required(),
-				
+
 				'inner' => \Onphp\Primitive::form('inner')->
 					of('\Onphp\Test\DirectoryItem')->
 					optional(),
