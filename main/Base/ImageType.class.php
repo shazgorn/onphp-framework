@@ -11,7 +11,7 @@
 
 	/**
 	 * PHP's image type constants.
-	 * 
+	 *
 	 * @ingroup Helpers
 	**/
 	namespace Onphp;
@@ -19,7 +19,7 @@
 	final class ImageType extends Enumeration
 	{
 		const IMAGETYPE_PJPEG	= 100;
-		
+
 		const GIF		= IMAGETYPE_GIF;
 		const JPEG		= IMAGETYPE_JPEG;
 		const PNG		= IMAGETYPE_PNG;
@@ -32,13 +32,13 @@
 		const JP2		= IMAGETYPE_JP2;
 		const JPX		= IMAGETYPE_JPX;
 		const JB2		= IMAGETYPE_JB2;
-		const SWC		= IMAGETYPE_SWC;
+            // const SWC		= IMAGETYPE_SWC;
 		const IFF		= IMAGETYPE_IFF;
 		const WBMP		= IMAGETYPE_WBMP;
 		const JPEG2000	= IMAGETYPE_JPEG2000;
 		const XBM		= IMAGETYPE_XBM;
 		const PJPEG		= self::IMAGETYPE_PJPEG;
-		
+
 		protected $names = array(
 			IMAGETYPE_GIF			=> 'gif',
 			IMAGETYPE_JPEG			=> 'jpeg',
@@ -52,14 +52,14 @@
 			IMAGETYPE_JP2			=> 'jp2',
 			IMAGETYPE_JPX			=> 'jpx',
 			IMAGETYPE_JB2			=> 'jb2',
-			IMAGETYPE_SWC			=> 'swc',
+			// IMAGETYPE_SWC			=> 'swc',
 			IMAGETYPE_IFF			=> 'iff',
 			IMAGETYPE_WBMP			=> 'bmp',
 			IMAGETYPE_JPEG2000		=> 'jpc',
 			IMAGETYPE_XBM			=> 'xbm',
 			self::IMAGETYPE_PJPEG	=> 'jpeg'
 		);
-		
+
 		protected $extensions = array(
 			'gif'	=> IMAGETYPE_GIF,
 			'jpg'	=> IMAGETYPE_JPEG,
@@ -75,13 +75,13 @@
 			'jp2'	=> IMAGETYPE_JP2,
 			'jpx'	=> IMAGETYPE_JPX,
 			'jb2'	=> IMAGETYPE_JB2,
-			'swc'	=> IMAGETYPE_SWC,
+			// 'swc'	=> IMAGETYPE_SWC,
 			'iff'	=> IMAGETYPE_IFF,
 			'wbmp'	=> IMAGETYPE_WBMP,
 			'jpc'	=> IMAGETYPE_JPEG2000,
 			'xbm'	=> IMAGETYPE_XBM
 		);
-		
+
 		protected $mimeTypes = array(
 			IMAGETYPE_GIF			=> 'image/gif',
 			IMAGETYPE_JPEG			=> 'image/jpeg',
@@ -95,49 +95,49 @@
 			IMAGETYPE_JP2			=> 'image/jp2',
 			IMAGETYPE_JPX			=> 'image/jpx',
 			IMAGETYPE_JB2			=> 'image/jb2',
-			IMAGETYPE_SWC			=> 'application/x-shockwave-flash',
+			// IMAGETYPE_SWC			=> 'application/x-shockwave-flash',
 			IMAGETYPE_IFF			=> 'image/iff',
 			IMAGETYPE_WBMP			=> 'image/vnd.wap.wbmp',
 			IMAGETYPE_JPEG2000		=> 'image/jpeg',
 			IMAGETYPE_XBM			=> 'image/xbm',
 			self::IMAGETYPE_PJPEG	=> 'image/pjpeg'
 		);
-		
+
 		public static function getAnyId()
 		{
 			return self::GIF;
 		}
-		
+
 		public function getMimeType()
 		{
 			return $this->mimeTypes[$this->id];
 		}
-		
+
 		public function getExtension()
 		{
 			$flippedExensions = array_flip($this->extensions);
-			
+
 			return $flippedExensions[$this->id];
 		}
-		
+
 		public function getExtensionList()
 		{
 			return $this->extensions;
 		}
-		
+
 		public static function createByFileName($fileName)
 		{
 			$ext =
 				strtolower(
 					pathinfo($fileName, PATHINFO_EXTENSION)
 				);
-			
+
 			$anyImageType = new self(self::getAnyId());
 			$extensionList = $anyImageType->getExtensionList();
-			
+
 			if (isset($extensionList[$ext]))
 				return new self($extensionList[$ext]);
-			
+
 			throw new WrongArgumentException(
 				"don't know type for '{$ext}' extension"
 			);
