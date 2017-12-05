@@ -14,7 +14,7 @@ namespace Onphp;
 
 /**
  * Class MockServiceLocator
- * @package OnPhp
+ * @package Onphp
  */
 class MockServiceLocator extends ServiceLocator
 {

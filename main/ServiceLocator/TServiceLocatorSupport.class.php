@@ -14,7 +14,7 @@ namespace Onphp;
 
 /**
  * Class TServiceLocatorSupport
- * @package OnPhp
+ * @package Onphp
  */
 trait TServiceLocatorSupport
 {

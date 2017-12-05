@@ -10,7 +10,7 @@
  *                                                                         *
  ***************************************************************************/
 
-namespace OnPhp;
+namespace Onphp;
 
 class WebAppControllerResolverHandler implements InterceptingChainHandler
 {

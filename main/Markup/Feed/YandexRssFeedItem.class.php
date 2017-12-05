@@ -9,36 +9,113 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Feed
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Feed
+ **/
+namespace Onphp;
 
-	final class YandexRssFeedItem extends FeedItem
-	{
-		private $fullText	= null;
-		
-		/**
-		 * @return \Onphp\YandexRssFeedItem
-		**/
-		public static function create($title)
-		{
-			return new self($title);
-		}
-		
-		public function getFullText()
-		{
-			return $this->fullText;
-		}
-		
-		/**
-		 * @return \Onphp\YandexRssFeedItem
-		**/
-		public function setFullText($fullText)
-		{
-			$this->fullText = $fullText;
-			
-			return $this;
-		}
-	}
+final class YandexRssFeedItem extends FeedItem
+{
+    /** @var string */
+    private $fullText = null;
+
+    /** @var string */
+    private $genre = null;
+
+    /** @var bool */
+    protected $turbo;
+
+    /** @var array|null */
+    protected $related = [];
+
+    /**
+     * @return \Onphp\YandexRssFeedItem
+     **/
+    public static function create($title)
+    {
+        return new self($title);
+    }
+
+    public function getFullText()
+    {
+        return $this->fullText;
+    }
+
+    /**
+     * @return \Onphp\YandexRssFeedItem
+     **/
+    public function setFullText($fullText)
+    {
+        $this->fullText = $fullText;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGenre()
+    {
+        return $this->genre;
+    }
+
+    /**
+     * @param string $genre
+     * @return $this
+     */
+    public function setGenre($genre)
+    {
+        $this->genre = $genre;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getTurbo()
+    {
+        return $this->turbo;
+    }
+
+    /**
+     * @param bool $turbo
+     * @return YandexRssFeedItem
+     */
+    public function setTurbo($turbo)
+    {
+        $this->turbo = $turbo;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getRelated()
+    {
+        return $this->related;
+    }
+
+    /**
+     * @param bool $related
+     * @return array
+     */
+    public function setRelated($related)
+    {
+        $this->related = $related;
+
+        return $this;
+    }
+
+    /**
+     * @param array $link
+     */
+    public function appendRelated($link)
+    {
+        $this->related[] = $link;
+
+        return $this;
+    }
+}
 ?>

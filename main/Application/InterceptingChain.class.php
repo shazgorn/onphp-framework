@@ -9,7 +9,7 @@
  *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
-namespace OnPhp;
+namespace Onphp;
 
 class InterceptingChain
 {
@@ -23,7 +23,7 @@ class InterceptingChain
      */
     public function add(InterceptingChainHandler $handler)
     {
-        $this->chain [] = $handler;
+        $this->chain[] = $handler;
 
         return $this;
     }
@@ -51,7 +51,7 @@ class InterceptingChain
 
         if (isset($this->chain[$this->pos])) {
             $handler = $this->chain[$this->pos];
-            /* @var $handler InterceptingChainHandler */
+            /** @var $handler InterceptingChainHandler */
             $handler->run($this);
             $this->checkHandlerResult($handler);
         }

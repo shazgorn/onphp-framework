@@ -10,45 +10,45 @@
  *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
-namespace OnPhp {
-    class WebAppLinkerInjector implements InterceptingChainHandler
+namespace Onphp;
+
+class WebAppLinkerInjector implements InterceptingChainHandler
+{
+    /**
+     * @var string
+     */
+    private $logClassName = null;
+    private $baseUrl = null;
+
+    /**
+     * @param string $logClassName
+     * @return WebAppLinkerInjector
+     */
+    public function setLogClassName($logClassName)
     {
-        /**
-         * @var string
-         */
-        private $logClassName = null;
-        private $baseUrl = null;
+        $this->logClassName = $logClassName;
+        return $this;
+    }
 
-        /**
-         * @param string $logClassName
-         * @return WebAppLinkerInjector
-         */
-        public function setLogClassName($logClassName)
-        {
-            $this->logClassName = $logClassName;
-            return $this;
-        }
+    /**
+     * @param string $baseUrl
+     * @return WebAppLinkerInjector
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $this->baseUrl = $baseUrl;
+        return $this;
+    }
 
-        /**
-         * @param string $baseUrl
-         * @return WebAppLinkerInjector
-         */
-        public function setBaseUrl($baseUrl)
-        {
-            $this->baseUrl = $baseUrl;
-            return $this;
-        }
+    public function run(InterceptingChain $chain)
+    {
+        /* @var $chain WebApplication */
+        $serviceLocator = $chain->getServiceLocator();
+        $linker = $serviceLocator->spawn('ToolkitLinkUtils');
+        /* @var $linker ToolkitLinkUtils */
+        $linker->setLogClassName($this->logClassName)->setBaseUrl($this->baseUrl);
+        $serviceLocator->set('linker', $linker);
 
-        public function run(InterceptingChain $chain)
-        {
-            /* @var $chain WebApplication */
-            $serviceLocator = $chain->getServiceLocator();
-            $linker = $serviceLocator->spawn('ToolkitLinkUtils');
-            /* @var $linker ToolkitLinkUtils */
-            $linker->setLogClassName($this->logClassName)->setBaseUrl($this->baseUrl);
-            $serviceLocator->set('linker', $linker);
-
-            $chain->next();
-        }
+        $chain->next();
     }
 }

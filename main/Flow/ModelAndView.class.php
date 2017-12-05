@@ -9,95 +9,95 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Flow
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Flow
+ **/
+namespace Onphp;
 
-	class ModelAndView
-	{
-		private $model 	= null;
-		
-		private $view	= null;
-		
-		/**
-		 * @return \Onphp\ModelAndView
-		**/
-		public static function create()
-		{
-			return new self;
-		}
-		
-		public function __construct()
-		{
-			$this->model = new Model();
-		}
-		
-		/**
-		 * @return \Onphp\Model
-		**/
-		public function getModel()
-		{
-			return $this->model;
-		}
-		
-		/**
-		 * @return \Onphp\ModelAndView
-		**/
-		public function setModel(Model $model)
-		{
-			$this->model = $model;
-			
-			return $this;
-		}
-		
-		public function getView()
-		{
-			return $this->view;
-		}
-		
-		/**
-		 * @return \Onphp\ModelAndView
-		**/
-		public function setView($view)
-		{
-			Assert::isTrue(
-				($view instanceof View)	|| is_string($view),
-				'do not know, what to do with such view'
-			);
-			
-			$this->view = $view;
-			
-			return $this;
-		}
+class ModelAndView
+{
+    private $model 	= null;
 
-		/**
-		 * @return ModelAndView
-		 */
-		public function dropView()
-		{
-			$this->view = null;
-			
-			return $this;
-		}
+    private $view	= null;
+
+    /**
+     * @return \Onphp\ModelAndView
+     **/
+    public static function create()
+    {
+        return new self;
+    }
+
+    public function __construct()
+    {
+        $this->model = new Model();
+    }
+
+    /**
+     * @return \Onphp\Model
+     **/
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return \Onphp\ModelAndView
+     **/
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * @return \Onphp\ModelAndView
+     **/
+    public function setView($view)
+    {
+        Assert::isTrue(
+            ($view instanceof View)	|| is_string($view),
+            'do not know, what to do with such view'
+        );
+
+        $this->view = $view;
+
+        return $this;
+    }
+
+    /**
+     * @return ModelAndView
+     */
+    public function dropView()
+    {
+        $this->view = null;
+
+        return $this;
+    }
 
 
-		public function viewIsRedirect()
-		{
-			return
-				($this->view instanceof CleanRedirectView)
-				|| (
-					is_string($this->view)
-					&& strpos($this->view, 'redirect') === 0
-				);
-		}
-		
-		public function viewIsNormal()
-		{
-			return (
-				!$this->viewIsRedirect()
-				&& $this->view !== View::ERROR_VIEW
-			);
-		}
-	}
+    public function viewIsRedirect()
+    {
+        return
+            ($this->view instanceof CleanRedirectView)
+            || (
+                is_string($this->view)
+                && strpos($this->view, 'redirect') === 0
+            );
+    }
+
+    public function viewIsNormal()
+    {
+        return (
+            !$this->viewIsRedirect()
+            && $this->view !== View::ERROR_VIEW
+        );
+    }
+}
 ?>

@@ -9,65 +9,69 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Feed
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Feed
+ **/
+namespace Onphp;
 
-	final class RssChannelWorker extends Singleton implements FeedChannelWorker
-	{
-		/**
-		 * @return \Onphp\RssChannelWorker
-		**/
-		public static function me()
-		{
-			return Singleton::getInstance(__CLASS__);
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function makeChannel(\SimpleXMLElement $xmlFeed)
-		{
-			if (
-				(!isset($xmlFeed->channel))
-				|| (!isset($xmlFeed->channel->title))
-			)
-				throw new WrongStateException(
-					'there are no channels in given rss'
-				);
-			
-			$feedChannel =
-				FeedChannel::create((string) $xmlFeed->channel->title);
-			
-			if (isset($xmlFeed->channel->link))
-				$feedChannel->setLink((string) $xmlFeed->channel->link);
-			
-			return $feedChannel;
-		}
-		
-		public function toXml(FeedChannel $channel, $itemsXml)
-		{
-			return
-				'<rss version="'.RssFeedFormat::VERSION.'">'
-					.'<channel>'
-						.'<title>'.$channel->getTitle().'</title>'
-						.(
-							$channel->getLink()
-								? '<link>'.$channel->getLink().'</link>'
-								: null
-						)
-						.(
-							$channel->getDescription()
-								?
-									'<description>'
-									.$channel->getDescription()
-									.'</description>'
-								: null
-						)
-						.$itemsXml
-					.'</channel>'
-				.'</rss>';
-		}
-	}
+final class RssChannelWorker extends Singleton implements FeedChannelWorker
+{
+    // XML Declaration
+    const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>';
+
+    /**
+     * @return \Onphp\RssChannelWorker
+     **/
+    public static function me()
+    {
+        return Singleton::getInstance(__CLASS__);
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function makeChannel(\SimpleXMLElement $xmlFeed)
+    {
+        if (
+            (!isset($xmlFeed->channel))
+            || (!isset($xmlFeed->channel->title))
+        )
+            throw new WrongStateException(
+                'there are no channels in given rss'
+            );
+
+        $feedChannel =
+            FeedChannel::create((string) $xmlFeed->channel->title);
+
+        if (isset($xmlFeed->channel->link))
+            $feedChannel->setLink((string) $xmlFeed->channel->link);
+
+        return $feedChannel;
+    }
+
+    public function toXml(FeedChannel $channel, $itemsXml)
+    {
+        return
+            self::XML_DECLARATION . "\n"
+            . '<rss version="'.RssFeedFormat::VERSION.'">'
+            .'<channel>'
+            .'<title>'.$channel->getTitle().'</title>'
+            .(
+                $channel->getLink()
+                ? '<link>'.$channel->getLink().'</link>'
+                : null
+            )
+            .(
+                $channel->getDescription()
+                ?
+                '<description>'
+                .$channel->getDescription()
+                .'</description>'
+                : null
+            )
+            .$itemsXml
+            .'</channel>'
+            .'</rss>';
+    }
+}
 ?>

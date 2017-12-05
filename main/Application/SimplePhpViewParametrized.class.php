@@ -10,132 +10,131 @@
  *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
-namespace OnPhp {
+namespace Onphp;
 
-    class SimplePhpViewParametrized extends CustomPhpView
+class SimplePhpViewParametrized extends CustomPhpView
+{
+    /**
+     * @var Model
+     */
+    protected $model = null;
+    protected $params = array();
+
+    public function render($model = null)
     {
-        /**
-         * @var Model
-         */
-        protected $model = null;
-        protected $params = array();
+        $this->model = $model;
+        return parent::render($model);
+    }
 
-        public function render($model = null)
-        {
-            $this->model = $model;
-            return parent::render($model);
+    /**
+     * @param $name
+     * @return mixed
+     * @throws MissingElementException
+     */
+    public function get($name)
+    {
+        if (!$this->has($name)) {
+            throw new MissingElementException("not setted value with name '$name'");
         }
+        return $this->params[$name];
+    }
 
-        /**
-         * @param $name
-         * @return mixed
-         * @throws MissingElementException
-         */
-        public function get($name)
-        {
-            if (!$this->has($name)) {
-                throw new MissingElementException("not setted value with name '$name'");
-            }
-            return $this->params[$name];
+    /**
+     * @param $name
+     * @return bool
+     * @throws WrongArgumentException
+     */
+    public function has($name)
+    {
+        Assert::isScalar($name);
+        return array_key_exists($name, $this->params);
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     * @throws WrongStateException
+     */
+    public function set($name, $value)
+    {
+        if ($this->has($name)) {
+            throw new WrongStateException("value with name '$name' already setted ");
         }
+        $this->params[$name] = $value;
+        return $this;
+    }
 
-        /**
-         * @param $name
-         * @return bool
-         * @throws WrongArgumentException
-         */
-        public function has($name)
-        {
-            Assert::isScalar($name);
-            return array_key_exists($name, $this->params);
+    /**
+     * @param $name
+     * @return $this
+     * @throws MissingElementException
+     */
+    public function drop($name)
+    {
+        if (!$this->has($name)) {
+            throw new MissingElementException("not setted value with name '$name'");
         }
+        unset($this->params[$name]);
+        return $this;
+    }
 
-        /**
-         * @param $name
-         * @param $value
-         * @return $this
-         * @throws WrongStateException
-         */
-        public function set($name, $value)
-        {
-            if ($this->has($name)) {
-                throw new WrongStateException("value with name '$name' already setted ");
-            }
-            $this->params[$name] = $value;
-            return $this;
-        }
-
-        /**
-         * @param $name
-         * @return $this
-         * @throws MissingElementException
-         */
-        public function drop($name)
-        {
-            if (!$this->has($name)) {
-                throw new MissingElementException("not setted value with name '$name'");
-            }
-            unset($this->params[$name]);
-            return $this;
-        }
-
-        /**
-         * @param $templateName
-         * @param array $params
-         */
-        protected function template($templateName, array $params = array())
-        {
-            if (!empty($params)) {
-                $model = (new Model())->merge($this->model);
-                foreach ($params as $paramName => $paramValue) {
-                    $model->set($paramName, $paramValue);
-                }
-                $this->partViewer->view($templateName, $model);
-            } else {
-                $this->partViewer->view($templateName);
-            }
-        }
-
-        /**
-         * @param $templateName
-         * @param null $model
-         * @throws WrongArgumentException
-         */
-        protected function view($templateName, /* Model */
-                                $model = null)
-        {
-            if ($model && is_array($model)) {
-                $model = $this->array2Model($model);
-            } elseif ($model) {
-                Assert::isInstance($model, 'Model', '$model must be instance of Model or array or null');
+    /**
+     * @param $templateName
+     * @param array $params
+     */
+    protected function template($templateName, array $params = array())
+    {
+        if (!empty($params)) {
+            $model = (new Model())->merge($this->model);
+            foreach ($params as $paramName => $paramValue) {
+                $model->set($paramName, $paramValue);
             }
             $this->partViewer->view($templateName, $model);
+        } else {
+            $this->partViewer->view($templateName);
+        }
+    }
+
+    /**
+     * @param $templateName
+     * @param null $model
+     * @throws WrongArgumentException
+     */
+    protected function view($templateName, /* Model */
+                            $model = null)
+    {
+        if ($model && is_array($model)) {
+            $model = $this->array2Model($model);
+        } elseif ($model) {
+            Assert::isInstance($model, 'Model', '$model must be instance of Model or array or null');
+        }
+        $this->partViewer->view($templateName, $model);
+    }
+
+    /**
+     * @param array $array
+     * @return Model
+     */
+    private function array2Model(array $array)
+    {
+        $model = new Model();
+        foreach ($array as $key => $value) {
+            $model->set($key, $value);
         }
 
-        /**
-         * @param array $array
-         * @return Model
-         */
-        private function array2Model(array $array)
-        {
-            $model = new Model();
-            foreach ($array as $key => $value) {
-                $model->set($key, $value);
-            }
+        return $model;
+    }
 
-            return $model;
+    /**
+     * @param $value
+     * @return string
+     */
+    protected function escape($value/*,  sprintf params */)
+    {
+        if (func_num_args() > 1) {
+            $value = call_user_func_array('sprintf', func_get_args());
         }
-
-        /**
-         * @param $value
-         * @return string
-         */
-        protected function escape($value/*,  sprintf params */)
-        {
-            if (func_num_args() > 1) {
-                $value = call_user_func_array('sprintf', func_get_args());
-            }
-            return htmlspecialchars($value);
-        }
+        return htmlspecialchars($value);
     }
 }

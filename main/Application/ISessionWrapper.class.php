@@ -10,7 +10,7 @@
  *                                                                         *
  ***************************************************************************/
 
-namespace OnPhp;
+namespace Onphp;
 
 /**
  * Interface of dynamic wrapper around session_*() functions.

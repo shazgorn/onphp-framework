@@ -9,69 +9,69 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Flow
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Flow
+ **/
+namespace Onphp;
 
-	class SimplePhpView extends EmptyView
-	{
-		protected $templatePath		= null;
-		protected $partViewResolver	= null;
-		
-		public function __construct($templatePath, ViewResolver $partViewResolver)
-		{
-			$this->templatePath = $templatePath;
-			$this->partViewResolver = $partViewResolver;
-		}
-		
-		/**
-		 * @return \Onphp\SimplePhpView
-		**/
-		public function render(/* Model */ $model = null)
-		{
-			Assert::isTrue($model === null || $model instanceof Model);
-			
-			if ($model)
-				extract($model->getList());
-			
-			$partViewer = new PartViewer($this->partViewResolver, $model);
-			
-			$this->preRender();
-			
-			include $this->templatePath;
-			
-			$this->postRender();
-			
-			return $this;
-		}
-		
-		public function toString($model = null)
-		{
-			try {
-				ob_start();
-				$this->render($model);
-				return ob_get_clean();
-			} catch (\Exception $e) {
-				ob_end_clean();
-				throw $e;
-			}
-		}
-		
-		/**
-		 * @return \Onphp\SimplePhpView
-		**/
-		protected function preRender()
-		{
-			return $this;
-		}
-		
-		/**
-		 * @return \Onphp\SimplePhpView
-		**/
-		protected function postRender()
-		{
-			return $this;
-		}
-	}
+class SimplePhpView extends EmptyView
+{
+    protected $templatePath		= null;
+    protected $partViewResolver	= null;
+
+    public function __construct($templatePath, ViewResolver $partViewResolver)
+    {
+        $this->templatePath = $templatePath;
+        $this->partViewResolver = $partViewResolver;
+    }
+
+    /**
+     * @return \Onphp\SimplePhpView
+     **/
+    public function render(/* Model */ $model = null)
+    {
+        Assert::isTrue($model === null || $model instanceof Model);
+
+        if ($model)
+            extract($model->getList());
+
+        $partViewer = new PartViewer($this->partViewResolver, $model);
+
+        $this->preRender();
+
+        include $this->templatePath;
+
+        $this->postRender();
+
+        return $this;
+    }
+
+    public function toString($model = null)
+    {
+        try {
+            ob_start();
+            $this->render($model);
+            return ob_get_clean();
+        } catch (\Exception $e) {
+            ob_end_clean();
+            throw $e;
+        }
+    }
+
+    /**
+     * @return \Onphp\SimplePhpView
+     **/
+    protected function preRender()
+    {
+        return $this;
+    }
+
+    /**
+     * @return \Onphp\SimplePhpView
+     **/
+    protected function postRender()
+    {
+        return $this;
+    }
+}
 ?>

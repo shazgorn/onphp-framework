@@ -9,7 +9,7 @@
  *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
-namespace OnPhp;
+namespace Onphp;
 
 interface InterceptingChainHandler
 {

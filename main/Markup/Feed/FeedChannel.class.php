@@ -9,99 +9,137 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Feed
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Feed
+ **/
+namespace Onphp;
 
-	final class FeedChannel
-	{
-		private $title			= null;
-		private $link			= null;
-		private $description	= null;
-		private $feedItems		= array();
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public static function create($title)
-		{
-			return new self($title);
-		}
-		
-		public function __construct($title)
-		{
-			$this->title = $title;
-		}
-		
-		public function getTitle()
-		{
-			return $this->title;
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function setTitle($title)
-		{
-			$this->title = $title;
-			
-			return $this;
-		}
-		
-		public function getDescription()
-		{
-			return $this->description;
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function setDescription($description)
-		{
-			$this->description = $description;
-			
-			return $this;
-		}
-		
-		public function getLink()
-		{
-			return $this->link;
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function setLink($link)
-		{
-			$this->link = $link;
-			
-			return $this;
-		}
-		
-		public function getFeedItems()
-		{
-			return $this->feedItems;
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function setFeedItems($feedItems)
-		{
-			$this->feedItems = $feedItems;
-			
-			return $this;
-		}
-		
-		/**
-		 * @return \Onphp\FeedChannel
-		**/
-		public function addFeedItem(FeedItem $feedItem)
-		{
-			$this->feedItems[] = $feedItem;
-			
-			return $this;
-		}
-	}
+class FeedChannel
+{
+    private $title			= null;
+    private $link			= null;
+    private $description	= null;
+    private $feedItems		= array();
+    private $lastBuildDate = null;
+    private $language = null;
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public static function create($title)
+    {
+        return new self($title);
+    }
+
+    public function __construct($title)
+    {
+        $this->title = $title;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function setLink($link)
+    {
+        $this->link = $link;
+
+        return $this;
+    }
+
+    public function getFeedItems()
+    {
+        return $this->feedItems;
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function setFeedItems($feedItems)
+    {
+        $this->feedItems = $feedItems;
+
+        return $this;
+    }
+
+    /**
+     * @return \Onphp\FeedChannel
+     **/
+    public function addFeedItem(FeedItem $feedItem)
+    {
+        $this->feedItems[] = $feedItem;
+
+        return $this;
+    }
+
+    /**
+     * @return Timestamp
+     */
+    public function getLastBuildDate()
+    {
+        return $this->lastBuildDate;
+    }
+
+    /**
+     * @param Timestamp $lastBuildDate
+     * @return $this
+     */
+    public function setLastBuildDate(Timestamp $lastBuildDate)
+    {
+        $this->lastBuildDate = $lastBuildDate;
+        return $this;
+    }
+
+    /**
+     * @return null
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+}
 ?>

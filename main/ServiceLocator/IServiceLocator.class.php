@@ -14,7 +14,7 @@ namespace Onphp;
 
 /**
  * Interface IServiceLocator
- * @package OnPhp
+ * @package Onphp
  */
 interface IServiceLocator
 {

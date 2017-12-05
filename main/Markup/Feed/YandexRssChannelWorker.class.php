@@ -16,6 +16,9 @@ namespace Onphp;
  **/
 class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
 {
+    // XML Declaration
+    const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>';
+
     /**
      * @return RssChannelWorker
      **/
@@ -51,7 +54,8 @@ class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
     public function toXml($channel, $itemsXml)
     {
         return
-            '<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" version="' . RssFeedFormat::VERSION . '">'
+            self::XML_DECLARATION . "\n"
+            . '<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" version="' . RssFeedFormat::VERSION . '">'
             . '<channel>'
             . '<title>' . $channel->getTitle() . '</title>'
             . ($channel->getLink()
