@@ -16,12 +16,13 @@ namespace Onphp;
 
 class FeedChannel
 {
-    private $title			= null;
-    private $link			= null;
-    private $description	= null;
-    private $feedItems		= array();
+    private $title         = null;
+    private $link          = null;
+    private $description   = null;
+    private $feedItems     = array();
     private $lastBuildDate = null;
-    private $language = null;
+    private $language      = null;
+    private $namespaces    = array();
 
     /**
      * @return \Onphp\FeedChannel
@@ -138,6 +139,54 @@ class FeedChannel
     public function setLanguage($language)
     {
         $this->language = $language;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNamespaces()
+    {
+        return $this->namespaces;
+    }
+
+    /**
+     * @param array $namespaces of XMLNamespace
+     *
+     * @return FeedChannel
+     */
+    public function setNamespaces(array $namespaces)
+    {
+        $this->namespaces = $namespaces;
+
+        return $this;
+    }
+
+    /**
+     * @param XMLNamespace $namespace
+     *
+     * @return FeedChannel
+     */
+    public function addNamespaceObject(XMLNamespace $namespace)
+    {
+        $this->namespaces[] = $namespace;
+
+        return $this;
+    }
+
+    /**
+     * @param string $prefix
+     * @param string $URI
+     * @return FeedChannel
+     */
+    public function addNamespace(string $prefix, string $URI)
+    {
+        $this->addNamespaceObject(
+            XMLNamespace::create()
+            ->setPrefix($prefix)
+            ->setURI($URI)
+        );
 
         return $this;
     }

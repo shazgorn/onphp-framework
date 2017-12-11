@@ -9,93 +9,103 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Feed
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Feed
+ **/
+namespace Onphp;
 
-	final class RssItemWorker extends Singleton implements FeedItemWorker
-	{
-		/**
-		 * @return \Onphp\RssItemWorker
-		**/
-		public static function me()
-		{
-			return Singleton::getInstance(__CLASS__);
-		}
-		
-		public function makeItems(\SimpleXMLElement $xmlFeed)
-		{
-			$result = array();
-			
-			if (isset($xmlFeed->channel->item)) {
-				foreach ($xmlFeed->channel->item as $item) {
-					$feedItem =
-						FeedItem::create((string) $item->title)->
-						setContent(
-							FeedItemContent::create()->
-							setBody((string) $item->description)
-						)->
-						setPublished(
-							Timestamp::create(
-								strtotime((string) $item->pubDate)
-							)
-						)->
-						setLink((string) $item->link);
-					
-					if (isset($item->guid))
-						$feedItem->setId($item->guid);
-					
-					if (isset($item->category))
-						$feedItem->setCategory((string) $item->category);
-					
-					$result[] = $feedItem;
-				}
-			}
-			
-			return $result;
-		}
-		
-		public function toXml(FeedItem $item)
-		{
-			return
-				'<item>'
-					.(
-						$item->getPublished()
-							?
-								'<pubDate>'
-									.date('r', $item->getPublished()->toStamp())
-								.'</pubDate>'
-							: null
-					)
-					.(
-						$item->getId()
-							?
-								'<guid isPermaLink="false">'
-									.$item->getId()
-								.'</guid>'
-							: null
-					)
-					.'<title>'.$item->getTitle().'</title>'
-					.(
-						$item->getLink()
-							?
-								'<link>'
-								.str_replace("&", "&amp;", $item->getLink())
-								.'</link>'
-							: null
-					)
-					.(
-						$item->getSummary()
-							? '<description>'.$item->getSummary().'</description>'
-							: null
-					)
-					.(
-						$item->getCategory()
-							? '<category>'.$item->getCategory().'</category>'
-							: null
-					)
-				.'</item>';
-		}
-	}
+final class RssItemWorker extends Singleton implements FeedItemWorker
+{
+    /**
+     * @return \Onphp\RssItemWorker
+     **/
+    public static function me()
+    {
+        return Singleton::getInstance(__CLASS__);
+    }
+
+    public function makeItems(\SimpleXMLElement $xmlFeed)
+    {
+        $result = array();
+
+        if (isset($xmlFeed->channel->item)) {
+            foreach ($xmlFeed->channel->item as $item) {
+                $feedItem =
+                    FeedItem::create((string) $item->title)->
+                    setContent(
+                        FeedItemContent::create()->
+                        setBody((string) $item->description)
+                    )->
+                    setPublished(
+                        Timestamp::create(
+                            strtotime((string) $item->pubDate)
+                        )
+                    )->
+                    setLink((string) $item->link);
+
+                if (isset($item->guid))
+                    $feedItem->setId($item->guid);
+
+                if (isset($item->category))
+                    $feedItem->setCategory((string) $item->category);
+
+                $result[] = $feedItem;
+            }
+        }
+
+        return $result;
+    }
+
+    public function toXml(FeedItem $item)
+    {
+        return
+            '<item>'
+            .(
+                $item->getPublished()
+                ?
+                '<pubDate>'
+                .date('r', $item->getPublished()->toStamp())
+                .'</pubDate>'
+                : null
+            )
+            .(
+                $item->getId()
+                ?
+                '<guid isPermaLink="false">'
+                .$item->getId()
+                .'</guid>'
+                : null
+            )
+            .'<title>'.$item->getTitle().'</title>'
+            .(
+                $item->getLink()
+                ?
+                '<link>'
+                .str_replace("&", "&amp;", $item->getLink())
+                .'</link>'
+                : null
+            )
+            .(
+                $item->getSummary()
+                ? '<description>'.$item->getSummary().'</description>'
+                : null
+            )
+            .(
+                $item->getCategory()
+                ? '<category>'.$item->getCategory().'</category>'
+                : null
+            )
+            .(
+                $item->getAuthor()
+                ? '<author>' . $item->getAuthor()->getName() . '</author>'
+                : null
+            )
+            .(
+                $item->getContent()
+                ? '<content:encoded>' . $item->getContent() . '</content:encoded>'
+                : null
+            )
+            .'</item>';
+    }
+}
 ?>

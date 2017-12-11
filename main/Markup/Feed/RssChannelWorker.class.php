@@ -17,6 +17,7 @@ namespace Onphp;
 final class RssChannelWorker extends Singleton implements FeedChannelWorker
 {
     // XML Declaration
+    // TODO: MOVE TO FORMAT
     const XML_DECLARATION = '<?xml version="1.0" encoding="UTF-8"?>';
 
     /**
@@ -51,11 +52,16 @@ final class RssChannelWorker extends Singleton implements FeedChannelWorker
 
     public function toXml(FeedChannel $channel, $itemsXml)
     {
+        $ns = '';
+        /** @var XMLNamespace $namespace */
+        foreach ($channel->getNamespaces() as $namespace) {
+            $ns .= ' xmlns:' . $namespace->getPrefix() . '="' . $namespace->getURI() . '"';
+        };
         return
             self::XML_DECLARATION . "\n"
-            . '<rss version="'.RssFeedFormat::VERSION.'">'
-            .'<channel>'
-            .'<title>'.$channel->getTitle().'</title>'
+            . '<rss version="'.RssFeedFormat::VERSION.'"' . $ns . '>'
+            . '<channel>'
+            . '<title>'.$channel->getTitle().'</title>'
             .(
                 $channel->getLink()
                 ? '<link>'.$channel->getLink().'</link>'

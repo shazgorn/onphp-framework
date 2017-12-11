@@ -16,14 +16,17 @@ namespace Onphp;
 
 class FeedItem
 {
-    private $id			= null;
-    private $title		= null;
-    private $content	= null;
-    private $summary	= null;
-    private $published	= null;
-    private $link		= null;
-    private $category	= null;
-    private $enclosure = null;
+    private $id         = null;
+    private $title      = null;
+    private $content    = null;
+    private $summary    = null;
+    private $published  = null;
+    private $link       = null;
+    private $category   = null;
+    private $enclosure  = null;
+
+    /** @var string */
+    private $author     = null;
 
     /**
      * @return \Onphp\FeedItem
@@ -161,6 +164,25 @@ class FeedItem
     public function setEnclosure(FeedItemEnclosure $enclosure)
     {
         $this->enclosure = $enclosure;
+
+        return $this;
+    }
+
+    /**
+     * @return \Onphp\FeedAuthor
+     */
+    public function getAuthor()
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param string $author
+     * @return \Onphp\FeedItem
+     */
+    public function setAuthor(FeedAuthor $author)
+    {
+        $this->author = $author;
 
         return $this;
     }
