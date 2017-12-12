@@ -64,7 +64,7 @@ final class RssItemWorker extends Singleton implements FeedItemWorker
                 $item->getPublished()
                 ?
                 '<pubDate>'
-                .date('r', $item->getPublished()->toStamp())
+                .date(DATE_RSS, $item->getPublished()->toStamp())
                 .'</pubDate>'
                 : null
             )
