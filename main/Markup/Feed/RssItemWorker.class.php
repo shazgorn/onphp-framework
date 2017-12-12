@@ -102,7 +102,7 @@ final class RssItemWorker extends Singleton implements FeedItemWorker
             )
             .(
                 $item->getContent()
-                ? '<content:encoded>' . $item->getContent() . '</content:encoded>'
+                ? '<content:encoded>' . Cdata::create()->setData($item->getContent())->setStrict(true)->getData() . '</content:encoded>'
                 : null
             )
             .'</item>';
