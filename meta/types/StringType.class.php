@@ -9,53 +9,53 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Types
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Types
+ **/
+namespace Onphp;
 
-	class StringType extends BasePropertyType
-	{
-		public function getPrimitiveName()
-		{
-			return 'string';
-		}
-		
-		/**
-		 * @throws \Onphp\WrongArgumentException
-		 * @return \Onphp\StringType
-		**/
-		public function setDefault($default)
-		{
-			Assert::isString(
-				$default,
-				"strange default value given - '{$default}'"
-			);
-			
-			$this->default = $default;
-			
-			return $this;
-		}
-		
-		public function getDeclaration()
-		{
-			if ($this->hasDefault())
-				return "'{$this->default}'";
-			
-			return 'null';
-		}
-		
-		public function isMeasurable()
-		{
-			return true;
-		}
-		
-		public function toColumnType($length = null)
-		{
-			return
-				$length
-					? '\Onphp\DataType::create(\Onphp\DataType::VARCHAR)'
-					: '\Onphp\DataType::create(\Onphp\DataType::TEXT)';
-		}
-	}
+class StringType extends BasePropertyType
+{
+    public function getPrimitiveName()
+    {
+        return 'string';
+    }
+
+    /**
+     * @throws \Onphp\WrongArgumentException
+     * @return \Onphp\StringType
+     **/
+    public function setDefault($default)
+    {
+        Assert::isString(
+            $default,
+            "strange default value given - '{$default}'"
+        );
+
+        $this->default = $default;
+
+        return $this;
+    }
+
+    public function getDeclaration()
+    {
+        if ($this->hasDefault())
+            return "'{$this->default}'";
+
+        return 'null';
+    }
+
+    public function isMeasurable()
+    {
+        return true;
+    }
+
+    public function toColumnType($length = null)
+    {
+        return
+            $length
+            ? '\Onphp\DataType::create(\Onphp\DataType::VARCHAR)'
+            : '\Onphp\DataType::create(\Onphp\DataType::TEXT)';
+    }
+}
 ?>
