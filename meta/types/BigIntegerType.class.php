@@ -9,21 +9,21 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Types
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Types
+ **/
+namespace Onphp;
 
-	class BigIntegerType extends IntegerType
-	{
-		public function getSize()
-		{
-			return 8;
-		}
-		
-		public function toColumnType()
-		{
-			return '\Onphp\DataType::create(\Onphp\DataType::BIGINT)';
-		}
-	}
+class BigIntegerType extends IntegerType
+{
+    public function getSize()
+    {
+        return 8;
+    }
+
+    public function toColumnType()
+    {
+        return '\Onphp\DataType::create(\Onphp\DataType::BIGINT)';
+    }
+}
 ?>

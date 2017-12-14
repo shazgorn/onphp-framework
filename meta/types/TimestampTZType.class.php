@@ -9,21 +9,21 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Types
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Types
+ **/
+namespace Onphp;
 
-	final class TimestampTZType extends DateType
-	{
-		public function getPrimitiveName()
-		{
-			return 'timestampTZ';
-		}
+final class TimestampTZType extends DateType
+{
+    public function getPrimitiveName()
+    {
+        return 'timestampTZ';
+    }
 
-		public function toColumnType()
-		{
-			return '\Onphp\DataType::create(\Onphp\DataType::TIMESTAMPTZ)->setTimezoned(true)';
-		}
-	}
+    public function toColumnType()
+    {
+        return '\Onphp\DataType::create(\Onphp\DataType::TIMESTAMPTZ)->setTimezoned(true)';
+    }
+}
 ?>

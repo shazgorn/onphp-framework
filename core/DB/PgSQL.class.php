@@ -178,42 +178,43 @@ class PgSQL extends DB
      **/
     public function getTableInfo($table)
     {
+        // field type to data type
         static $types = array(
-            'time'			=> DataType::TIME,
-            'date'			=> DataType::DATE,
+            'time'                      => DataType::TIME,
+            'date'                      => DataType::DATE,
 
-            'timestamp'						=> DataType::TIMESTAMP,
-            'timestamptz'					=> DataType::TIMESTAMPTZ,
-            'timestamp with time zone'   	=> DataType::TIMESTAMPTZ,
+            'timestamp'                 => DataType::TIMESTAMP,
+            'timestamptz'               => DataType::TIMESTAMPTZ,
+            'timestamp with time zone'  => DataType::TIMESTAMPTZ,
 
-            'bool'			=> DataType::BOOLEAN,
+            'bool'                      => DataType::BOOLEAN,
 
-            'int2'			=> DataType::SMALLINT,
-            'int4'			=> DataType::INTEGER,
-            'int8'			=> DataType::BIGINT,
-            'numeric'		=> DataType::NUMERIC,
+            'int2'                      => DataType::SMALLINT,
+            'int4'                      => DataType::INTEGER,
+            'int8'                      => DataType::BIGINT,
+            'numeric'                   => DataType::NUMERIC,
 
-            'float4'		=> DataType::REAL,
-            'float8'		=> DataType::DOUBLE,
+            'float4'                    => DataType::REAL,
+            'float8'                    => DataType::DOUBLE,
 
-            'varchar'		=> DataType::VARCHAR,
-            'bpchar'		=> DataType::CHAR,
-            'text'			=> DataType::TEXT,
+            'varchar'                   => DataType::VARCHAR,
+            'bpchar'                    => DataType::CHAR,
+            'text'                      => DataType::TEXT,
 
-            'bytea'			=> DataType::BINARY,
+            'bytea'                     => DataType::BINARY,
 
-            'ip4'			=> DataType::IP,
-            'inet'			=> DataType::IP,
+            'ip4'                       => DataType::IP,
+            'inet'                      => DataType::IP,
 
-            'ip4r'			=> DataType::IP_RANGE,
+            'ip4r'                      => DataType::IP_RANGE,
 
-            'ltree'			=> DataType::LTREE,
+            'ltree'                     => DataType::LTREE,
 
             // unhandled types, not ours anyway
-            'tsvector'		=> null,
+            'tsvector'                  => null,
 
-            'hstore'		=> null,
-            'uuid'			=> DataType::VARCHAR,
+            'hstore'                    => null,
+            'uuid'                      => DataType::VARCHAR,
         );
 
         try {

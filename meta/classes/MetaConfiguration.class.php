@@ -309,6 +309,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
         require ONPHP_META_AUTO_DIR.'schema.php';
 
         foreach ($this->classes as $class) {
+            // existing table in database
+            $source = null;
+            // table in schema
+            $target = null;
             if (
                 $class->getTypeId() == MetaClassType::CLASS_ABSTRACT
                 || $class->getPattern() instanceof EnumerationClassPattern
@@ -349,9 +353,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
                 break;
             } catch (ObjectNotFoundException $e) {
-                $out->errorLine(
-                    "table '{$class->getTableName()}' not found, skipping."
-                );
+                $out->errorLine("table '{$class->getTableName()}' not found");
+                $out->warningLine('Consider creating one:');
+                $out->warningLine($target->toDialectString($db->getDialect()));
+                $out->warningLine('skipping');
                 continue;
             }
 

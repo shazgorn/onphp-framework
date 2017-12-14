@@ -18,9 +18,9 @@ namespace Onphp;
 
 final class DataType extends Enumeration implements DialectString
 {
-    const SMALLINT                      = 0x001001;
-    const INTEGER                       = 0x001002;
-    const BIGINT                        = 0x001003;
+    const SMALLINT                      = 0x011001;
+    const INTEGER                       = 0x011002;
+    const BIGINT                        = 0x011003;
     const NUMERIC                       = 0x001704;
 
     const REAL                          = 0x001105;
@@ -50,14 +50,16 @@ final class DataType extends Enumeration implements DialectString
     const HAVE_SCALE                    = 0x000400;
     const HAVE_TIMEZONE                 = 0x000800;
     const CAN_BE_UNSIGNED               = 0x001000;
+    const CAN_BE_SERIAL                 = 0x010000;
 
-    private $size               = null;
+    private $size       = null;
     private $precision  = null;
-    private $scale              = null;
+    private $scale      = null;
 
-    private $null               = true;
+    private $null       = true;
     private $timezone   = false;
     private $unsigned   = false;
+    private $serial     = false;
 
     protected $names = array(
         self::SMALLINT          => 'SMALLINT',
@@ -217,6 +219,20 @@ final class DataType extends Enumeration implements DialectString
     public function isUnsigned()
     {
         return $this->unsigned;
+    }
+
+    public function setSerial($serial = false)
+    {
+        Assert::isTrue(($this->id && self::CAN_BE_SERIAL) > 0);
+
+        $this->serial = ($serial === true);
+
+        return $this;
+    }
+
+    public function isSerial()
+    {
+        return $this->serial;
     }
 
     public function toDialectString(Dialect $dialect)
