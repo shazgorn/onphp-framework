@@ -9,135 +9,136 @@
  *                                                                         *
  ***************************************************************************/
 
-	namespace Onphp\Test;
+namespace Onphp\Test;
 
-	final class AutoloaderClassPathCacheTest extends TestCase
-	{
-		public function testOneCyclic()
-		{
-			//setup
-			$service = $this->spawnService();
-			
-			//simple autoload, will cache data to file
-			$service->autoload('\Onphp\Form');
-			
-			//second autoload call must not require to reload cache
-			$service->setNamespaceResolver($this->spawnResolver(array('getClassPathListCount' => 0)));
-			$service->autoload('Sub\Form');
-			
-			//but if we ask force recache it will reload
-			$service->setNamespaceResolver($this->spawnResolver());
-			$service->autoload('Sub\Form', true);
-		}
-		
-		public function testWithBaseException()
-		{
-			$service = $this->spawnService();
-			$counter = 0;
-			$callback = function() use (&$counter) {
-				switch ($counter++) {
-					case 0: return null;
-					case 1: throw new \Onphp\BaseException('include exception');
-					case 2: return null;
-					default: \Onphp\Assert::isUnreachable($counter - 1);
-				}
-			};
-			
-			$service->expects($this->exactly(3))->
-				method('includeFile')->
-				will($this->returnCallback($callback));
-			
-			//autoload without error, it's allow us to cache data
-			$service->autoload('\Onphp\Form');
+final class AutoloaderClassPathCacheTest extends TestCase
+{
+    public function testOneCyclic()
+    {
+        //setup
+        $service = $this->spawnService();
 
-			//second autoload and here we throw error
-			$service->setNamespaceResolver($this->spawnResolver(array(
-				'getPathsCount' => 2,
-				'getClassPathListCount' => 1,
-			)));
-			$service->autoload('\Onphp\Form');
-		}
-		
-		public function testRecacheOnChangedPath()
-		{
-			//setup
-			$service = $this->spawnService();
-			
-			//simple autoload, will cache data to file
-			$service->autoload('\Onphp\Form');
-			
-			//chang path list and expect recache
-			$service->setNamespaceResolver($this->spawnResolver(array(
-				'getPaths' => array('' => array('path1'))
-			)));
-			$service->autoload('\Onphp\Form');
-		}
-		
-		/**
-		 * @return \Onphp\AutoloaderClassPathCache
-		 */
-		private function spawnService(array $options = array())
-		{
-			$service = $this->getMockBuilder('\Onphp\AutoloaderClassPathCache')->
-				setMethods(array('includeFile', 'register', 'unregister'))->
-				getMock();
-			
-			/* @var $service \Onphp\AutoloaderClassPathCache */
-			$service->
-				setNamespaceResolver($this->spawnResolver($options))->
-				setClassCachePath($this->spawnCacheDir());
-			
-			return $service;
-		}
-		
-		/**
-		 * @return \Onphp\NamespaceResolver
-		 */
-		private function spawnResolver(array $options = array())
-		{
-			$options += array(
-				'getPaths' => array('' => array('path1', 'path2')),
-				'getPathsCount' => 1,
-				
-				'getClassExtension' => EXT_CLASS,
-				
-				'getClassPathList' => array(
-					0 => 'path1/',
-					'\Onphp\Form' => 0,
-					1 => 'path1/path2/',
-					'\Sub\Form' => 1,
-				),
-				'getClassPathListCount' => 1,
-			);
-			$mock = $this->getMock('\Onphp\NamespaceResolver');
-			
-			$mock->expects($this->any())->
-				method('getClassExtension')->
-				will($this->returnValue($options['getClassExtension']));
-			
-			$mock->expects($this->exactly($options['getPathsCount']))->
-				method('getPaths')->
-				will($this->returnValue($options['getPaths']));
-			
-			$mock->expects($this->exactly($options['getClassPathListCount']))->
-				method('getClassPathList')->
-				will($this->returnValue($options['getClassPathList']));
-			
-			return $mock;
-		}
-		
-		private function spawnCacheDir()
-		{
-			$cachePath = ONPHP_CLASS_CACHE.'testCache/';
-			if (file_exists($cachePath)) {
-				if (is_file($cachePath))
-					unlink($cachePath);
-				elseif (is_dir($cachePath)) {
-					\Onphp\FileUtils::removeDirectory($cachePath, true);
-				}
-			}
-			mkdir($cachePath, 0777, true);
-			return $cachePath;
-		}
-	}
+        //simple autoload, will cache data to file
+        $service->autoload('\Onphp\Form');
+
+        //second autoload call must not require to reload cache
+        $service->setNamespaceResolver($this->spawnResolver(array('getClassPathListCount' => 0)));
+        $service->autoload('Sub\Form');
+
+        //but if we ask force recache it will reload
+        $service->setNamespaceResolver($this->spawnResolver());
+        $service->autoload('Sub\Form', true);
+    }
+
+    public function testWithBaseException()
+    {
+        $service = $this->spawnService();
+        $counter = 0;
+        $callback = function() use (&$counter) {
+            switch ($counter++) {
+                case 0: return null;
+                case 1: throw new \Onphp\BaseException('include exception');
+                case 2: return null;
+                default: \Onphp\Assert::isUnreachable($counter - 1);
+            }
+        };
+
+        $service->expects($this->exactly(3))->
+            method('includeFile')->
+            will($this->returnCallback($callback));
+
+        //autoload without error, it's allow us to cache data
+        $service->autoload('\Onphp\Form');
+
+        //second autoload and here we throw error
+        $service->setNamespaceResolver($this->spawnResolver(array(
+            'getPathsCount' => 2,
+            'getClassPathListCount' => 1,
+        )));
+        $service->autoload('\Onphp\Form');
+    }
+
+    public function testRecacheOnChangedPath()
+    {
+        //setup
+        $service = $this->spawnService();
+
+        //simple autoload, will cache data to file
+        $service->autoload('\Onphp\Form');
+
+        //chang path list and expect recache
+        $service->setNamespaceResolver($this->spawnResolver(array(
+            'getPaths' => array('' => array('path1'))
+        )));
+        $service->autoload('\Onphp\Form');
+    }
+
+    /**
+     * @return \Onphp\AutoloaderClassPathCache
+     */
+    private function spawnService(array $options = array())
+    {
+        $service = $this->getMockBuilder('\Onphp\AutoloaderClassPathCache')->
+            setMethods(array('includeFile', 'register', 'unregister'))->
+            getMock();
+
+        /* @var $service \Onphp\AutoloaderClassPathCache */
+        $service->
+            setNamespaceResolver($this->spawnResolver($options))->
+            setClassCachePath($this->spawnCacheDir());
+
+        return $service;
+    }
+
+    /**
+     * @return \Onphp\NamespaceResolver
+     */
+    private function spawnResolver(array $options = array())
+    {
+        $options += array(
+            'getPaths' => array('' => array('path1', 'path2')),
+            'getPathsCount' => 1,
+
+            'getClassExtension' => EXT_CLASS,
+
+            'getClassPathList' => array(
+                0 => 'path1/',
+                '\Onphp\Form' => 0,
+                1 => 'path1/path2/',
+                '\Sub\Form' => 1,
+            ),
+            'getClassPathListCount' => 1,
+        );
+
+        $mock = $this->createMock('\Onphp\NamespaceResolver');
+
+        $mock->expects($this->any())->
+            method('getClassExtension')->
+            will($this->returnValue($options['getClassExtension']));
+
+        $mock->expects($this->exactly($options['getPathsCount']))->
+            method('getPaths')->
+            will($this->returnValue($options['getPaths']));
+
+        $mock->expects($this->exactly($options['getClassPathListCount']))->
+            method('getClassPathList')->
+            will($this->returnValue($options['getClassPathList']));
+
+        return $mock;
+    }
+
+    private function spawnCacheDir()
+    {
+        $cachePath = ONPHP_CLASS_CACHE.'testCache/';
+        if (file_exists($cachePath)) {
+            if (is_file($cachePath))
+                unlink($cachePath);
+            elseif (is_dir($cachePath)) {
+                \Onphp\FileUtils::removeDirectory($cachePath, true);
+            }
+        }
+        mkdir($cachePath, 0777, true);
+        return $cachePath;
+    }
+}
 ?>
