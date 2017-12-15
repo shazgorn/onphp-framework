@@ -398,11 +398,11 @@ final class Primitive extends StaticFactory
     }
 
     /**
-     * @return \Onphp\PrimitiveLtree
+     * @return \Onphp\PrimitiveLTree
      **/
     public static function ltree($name)
     {
-        return new PrimitiveLtree($name);
+        return new PrimitiveLTree($name);
     }
 }
 ?>

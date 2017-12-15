@@ -2,7 +2,7 @@
 
 namespace Onphp;
 
-class LtreeType extends StringType
+class LTreeType extends StringType
 {
     public function getPrimitiveName()
     {
