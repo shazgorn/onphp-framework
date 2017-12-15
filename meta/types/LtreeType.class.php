@@ -9,7 +9,7 @@ class LtreeType extends StringType
         return 'ltree';
     }
 
-    public function toColumnType()
+    public function toColumnType($length = null)
     {
         return '\Onphp\DataType::create(\Onphp\DataType::LTREE)';
     }
