@@ -162,10 +162,6 @@ final class DBTable implements DialectString
                     $column->getType()->getId()
                     != $targetColumns[$name]->getType()->getId()
                 ) {
-                    var_dump($column->getType()->getId());
-                    var_dump($column->getType()->getName());
-                    var_dump($targetColumns[$name]->getType()->getId());
-                    var_dump($targetColumns[$name]->getType()->getName());
                     $targetColumn = $targetColumns[$name];
                     $out[] =
                         $head
