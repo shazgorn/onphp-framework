@@ -242,12 +242,29 @@ class PgSQL extends DB
 
             $column =
                 new DBColumn(
-                    DataType::create($types[$info['type']])->
-                    setNull(!$info['not null']),
-
+                    DataType::create($types[$info['type']])
+                    ->setNull(!$info['not null']),
                     $name
                 );
 
+            if ($info['has default']) {
+                $default = $this->queryColumn(
+                    OSQL::select()->from('information_schema.columns')
+                    ->get('column_default')
+                    ->where(Expression::eq('table_name', $table->getName()))
+                    ->andWhere(Expression::eq('column_name', $name))
+                );
+                // skip nextval statements, no autoincrement support for now
+                if (strpos($default[0], 'nextval') === false) {
+                    $default = $default[0];
+                    if ($default === 'false') {
+                        $default = false;
+                    } elseif ($default === 'true') {
+                        $default = true;
+                    }
+                    $column->setDefault($default);
+                }
+            }
             $table->addColumn($column);
         }
 

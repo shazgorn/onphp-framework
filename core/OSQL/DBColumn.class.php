@@ -168,19 +168,11 @@ final class DBColumn implements SQLTableName
     public function toDialectString(Dialect $dialect)
     {
         $out =
-            $dialect->quoteField($this->name).' '
-            .$this->type->toDialectString($dialect);
+            $dialect->quoteField($this->name) . ' '
+            . $this->type->toDialectString($dialect);
 
-        if (null !== $this->default) {
-
-            if ($this->type->getId() == DataType::BOOLEAN)
-                $default = $this->default
-                    ? $dialect->literalToString(Dialect::LITERAL_TRUE)
-                    : $dialect->literalToString(Dialect::LITERAL_FALSE);
-            else
-                $default = $dialect->valueToString($this->default);
-
-            $out .= ' DEFAULT '.($default);
+        if ($this->default !== null) {
+             $out .= ' DEFAULT ' . $dialect->defaultToString($this);
         }
 
         if ($this->reference) {
