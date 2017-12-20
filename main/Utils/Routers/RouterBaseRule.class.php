@@ -116,15 +116,20 @@ abstract class RouterBaseRule implements RouterRule
      **/
     protected function processPath(HttpRequest $request)
     {
-        if ($request->hasServerVar('REQUEST_URI')) {
+        // One can override REQUEST_URI via `pathToProcess` variable
+        // for some custom routes, files etc
+        if ($request->hasAttachedVar('requestUri')) {
             $path =
-                $this->
-                getPath(
-                    HttpUrl::create()->
-                    parse($request->getServerVar('REQUEST_URI'))
+                $this->getPath(
+                    HttpUrl::create()->parse($request->getAttachedVar('requestUri'))
+                );
+        } elseif ($request->hasServerVar('REQUEST_URI')) {
+            $path =
+                $this->getPath(
+                    HttpUrl::create()->parse($request->getServerVar('REQUEST_URI'))
                 );
         } else {
-            throw new RouterException('Cannot resolve path. REQUEST_URI is not set');
+            throw new RouterException('Cannot resolve path. REQUEST_URI or `pathToProcess` is not set');
         }
 
         return $path;
