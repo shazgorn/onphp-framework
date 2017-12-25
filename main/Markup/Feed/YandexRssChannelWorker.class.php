@@ -51,11 +51,11 @@ class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
         return $feedChannel;
     }
 
-    public function toXml($channel, $itemsXml)
+    public function toXml(FeedChannel $channel, $itemsXml)
     {
         return
             self::XML_DECLARATION . "\n"
-            . '<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" version="' . RssFeedFormat::VERSION . '">'
+            . '<rss xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" version="' . RssFeedFormat::VERSION . '">'
             . '<channel>'
             . '<title>' . $channel->getTitle() . '</title>'
             . ($channel->getLink()

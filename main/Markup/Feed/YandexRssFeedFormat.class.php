@@ -33,7 +33,7 @@ final class YandexRssFeedFormat extends FeedFormat
      **/
     public function getChannelWorker()
     {
-        return RssChannelWorker::me();
+        return YandexRssChannelWorker::me();
     }
 
     /**
