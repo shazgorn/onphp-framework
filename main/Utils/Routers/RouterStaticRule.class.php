@@ -9,44 +9,44 @@
  *                                                                         *
  ***************************************************************************/
 
-	namespace Onphp;
+namespace Onphp;
 
-	final class RouterStaticRule extends RouterBaseRule
-	{
-		protected $route	= null;
+final class RouterStaticRule extends RouterBaseRule
+{
+    protected $route	= null;
 		
-		/**
-		 * @return \Onphp\RouterStaticRule
-		**/
-		public static function create($route)
-		{
-			return new self($route);
-		}
+    /**
+     * @return \Onphp\RouterStaticRule
+     **/
+    public static function create($route)
+    {
+        return new self($route);
+    }
 		
-		public function __construct($route)
-		{
-			// FIXME: rtrim. probably?
-			$this->route = trim($route, '/');
-		}
+    public function __construct($route)
+    {
+        // FIXME: rtrim. probably?
+        $this->route = trim($route, '/');
+    }
 		
-		public function match(HttpRequest $request)
-		{
-			$path = $this->processPath($request)->toString();
+    public function match(HttpRequest $request)
+    {
+        $path = $this->processPath($request)->toString();
 			
-			// FIXME: rtrim, probably?
-			if (trim(urldecode($path), '/') == $this->route)
-				return $this->defaults;
+        // FIXME: rtrim, probably?
+        if (trim(urldecode($path), '/') == $this->route)
+            return $this->defaults;
 			
-			return false;
-		}
+        return false;
+    }
 		
-		public function assembly(
-			array $data = array(),
-			$reset = false,
-			$encode = false
-		)
-		{
-			return $this->route;
-		}
-	}
+    public function assembly(
+        array $data = array(),
+        $reset = false,
+        $encode = false
+    )
+    {
+        return $this->route;
+    }
+}
 ?>
