@@ -19,6 +19,33 @@ final class DebugUtils extends StaticFactory
     private static $memoryAccumulator = 0;
     private static $currentMemory = null;
 
+    public static function e_dump($e)
+    {
+        echo get_class($e) . '(' . $e->getMessage() . ")\n";
+        foreach ($e->getTrace() as $i => $line) {
+            $error = '#' . $i;
+            $error .= (isset($line['file']) ? ' ' . $line['file'] : '');
+            $error .= (isset($line['line']) ? '(' . $line['line'] . '):' : '');
+            $error .= (isset($line['class']) ? ' ' . $line['class'] : '');
+            $error .= (isset($line['type']) ? $line['type'] : '');
+            $error .= $line['function'];
+            $error .= '(' . implode(', ', array_map(function($arg) {
+                if (is_integer($arg)) {
+                    return $arg;
+                } elseif (is_string($arg)) {
+                    return "'$arg'";
+                } elseif (is_array($arg)) {
+                    return 'Array';
+                } elseif (is_object($arg)) {
+                    return get_class($arg);
+                } else {
+                    return var_export($arg, true);
+                }
+            }, $line['args'])) . ')';
+            echo "$error\n";
+        }
+    }
+
     public static function el($vr, $prefix = null)
     {
         if ($prefix === null) {
