@@ -28,6 +28,9 @@ final class YandexRssFeedItem extends FeedItem
     /** @var array|null */
     protected $related = [];
 
+    /** @var string */
+    protected $turboContent;
+
     /**
      * @return \Onphp\YandexRssFeedItem
      **/
@@ -116,6 +119,26 @@ final class YandexRssFeedItem extends FeedItem
         $this->related[] = $link;
 
         return $this;
+    }
+
+    /**
+     * @param string $turboContent
+     *
+     * @return YandexRssFeedItem
+     */
+    public function setTurboContent($turboContent)
+    {
+        $this->turboContent = $turboContent;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTurboContent()
+    {
+        return $this->turboContent;
     }
 }
 ?>

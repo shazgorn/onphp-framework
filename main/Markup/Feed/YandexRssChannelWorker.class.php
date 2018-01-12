@@ -55,7 +55,7 @@ class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
     {
         return
             self::XML_DECLARATION . "\n"
-            . '<rss xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" version="' . RssFeedFormat::VERSION . '">'
+            . '<rss version="' . RssFeedFormat::VERSION . '" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yandex="http://news.yandex.ru" xmlns:turbo="http://turbo.yandex.ru">'
             . '<channel>'
             . '<title>' . $channel->getTitle() . '</title>'
             . ($channel->getLink()
@@ -94,6 +94,13 @@ class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
             . ($channel->getYandexAdNetworkId()
                ?
                '<yandex:adNetwork type="Yandex" id="' . $channel->getYandexAdNetworkId() . '"></yandex:adNetwork>'
+               : null)
+            . (count($channel->getYandexAds())
+               ?
+               implode('', array_map(function($el) {
+                   return '<yandex:adNetwork type="' . $el['type'] . '" id="' . $el['id'] . '"'
+                       . ($el['turbo-ad-id'] ? ' turbo-ad-id="' . $el['turbo-ad-id'] . '"' : null) . '></yandex:adNetwork>';
+               }, $channel->getYandexAds()))
                : null)
             . ($channel->getGoogleAnalytics()
                ?

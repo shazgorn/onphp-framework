@@ -27,6 +27,9 @@ class YandexRssFeedChannel extends FeedChannel
     /** @var string */
     protected $yandexAdNetworkId;
 
+    /** @var array */
+    protected $yandexAds = [];
+
     /** @var string */
     protected $googleAnalytics;
 
@@ -38,6 +41,11 @@ class YandexRssFeedChannel extends FeedChannel
 
     /** @var string */
     protected $mediascopeAnalytics;
+
+    protected $places = [
+        0 => 'first_ad_place',
+        1 => 'second_ad_place'
+    ];
 
     /**
      * @return mixed
@@ -150,6 +158,30 @@ class YandexRssFeedChannel extends FeedChannel
         $this->yandexAdNetworkId = $yandexAdNetworkId;
 
         return $this;
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return YandexRssFeedChannel
+     */
+    public function addYandexAd($id)
+    {
+        $this->yandexAds[] = [
+            'id' => $id,
+            'type' => 'Yandex',
+            'turbo-ad-id' => $this->places[count($this->yandexAds)],
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getYandexAds()
+    {
+        return $this->yandexAds;
     }
 
     /**

@@ -25,11 +25,12 @@ abstract class FeedFormat extends Singleton
         $this->checkWorkers();
 
         return
-            $this->getChannelWorker()->
-            makeChannel($xmlFeed)->
-            setFeedItems(
-                $this->getItemWorker()->
-                makeItems($xmlFeed)
+            $this->getChannelWorker()
+            ->makeChannel($xmlFeed)
+            ->setFeedItems(
+                $this
+                ->getItemWorker()
+                ->makeItems($xmlFeed)
             );
     }
 
@@ -44,6 +45,22 @@ abstract class FeedFormat extends Singleton
             $itemsXml .= $itemWorker->toXml($feedItem);
 
         return $this->getChannelWorker()->toXml($channel, $itemsXml);
+    }
+
+    /**
+     * Pretty print xml. For manual tests and debug.
+     * One should use FeedReader with FeedFormat for autotests.
+     * @param \Onphp\FeedChannel $channel
+     * @return string
+     */
+    public function toFormattedXml(FeedChannel $channel)
+    {
+        $xml = new \DOMDocument();
+        $xml->preserveWhiteSpace = false;
+        $xml->formatOutput = true;
+        $xml->loadXML($this->toXml($channel));
+        $outXML = $xml->saveXML();
+        return $outXML;
     }
 
     private function checkWorkers()

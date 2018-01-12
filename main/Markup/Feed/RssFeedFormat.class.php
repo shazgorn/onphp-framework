@@ -9,46 +9,46 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Feed
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Feed
+ **/
+namespace Onphp;
 
-	final class RssFeedFormat extends FeedFormat
-	{
-		const VERSION = '2.0';
+final class RssFeedFormat extends FeedFormat
+{
+    const VERSION = '2.0';
 		
-		/**
-		 * @return \Onphp\RssFeedFormat
-		**/
-		public static function me()
-		{
-			return Singleton::getInstance(__CLASS__);
-		}
+    /**
+     * @return \Onphp\RssFeedFormat
+     **/
+    public static function me()
+    {
+        return Singleton::getInstance(__CLASS__);
+    }
 		
-		/**
-		 * @return \Onphp\RssChannelWorker
-		**/
-		public function getChannelWorker()
-		{
-			return RssChannelWorker::me();
-		}
+    /**
+     * @return \Onphp\RssChannelWorker
+     **/
+    public function getChannelWorker()
+    {
+        return RssChannelWorker::me();
+    }
 		
-		/**
-		 * @return \Onphp\RssItemWorker
-		**/
-		public function getItemWorker()
-		{
-			return RssItemWorker::me();
-		}
+    /**
+     * @return \Onphp\RssItemWorker
+     **/
+    public function getItemWorker()
+    {
+        return RssItemWorker::me();
+    }
 		
-		public function isAcceptable(\SimpleXMLElement $xmlFeed)
-		{
-			return (
-				($xmlFeed->getName() == 'rss')
-				&& (isset($xmlFeed['version']))
-				&& ($xmlFeed['version'] == self::VERSION)
-			);
-		}
-	}
+    public function isAcceptable(\SimpleXMLElement $xmlFeed)
+    {
+        return (
+            ($xmlFeed->getName() == 'rss')
+            && (isset($xmlFeed['version']))
+            && ($xmlFeed['version'] == self::VERSION)
+        );
+    }
+}
 ?>
