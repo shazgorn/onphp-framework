@@ -73,7 +73,7 @@ final class YandexRssItemWorker extends Singleton implements FeedItemWorker
     public function toXml(FeedItem $item)
     {
         return
-            '<item>'
+            '<item' . ($item->isTurbo() ? ' turbo="true"' : '') . '>'
             .'<title>'.$item->getTitle().'</title>'
             .(
                 $item->getLink()

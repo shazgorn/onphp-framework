@@ -76,6 +76,14 @@ final class YandexRssFeedItem extends FeedItem
     /**
      * @return bool
      */
+    public function isTurbo()
+    {
+        return $this->turbo;
+    }
+
+    /**
+     * @return bool
+     */
     public function getTurbo()
     {
         return $this->turbo;
