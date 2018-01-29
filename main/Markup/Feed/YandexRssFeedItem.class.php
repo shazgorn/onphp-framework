@@ -28,6 +28,9 @@ final class YandexRssFeedItem extends FeedItem
     /** @var array|null */
     protected $related = [];
 
+    /** @var bool */
+    protected $relatedInfinity = false;
+
     /** @var string */
     protected $turboContent;
 
@@ -147,6 +150,25 @@ final class YandexRssFeedItem extends FeedItem
     public function getTurboContent()
     {
         return $this->turboContent;
+    }
+
+    /**
+     * @param bool $relatedInfinity
+     * @return YandexRssFeedItem
+     */
+    public function setRelatedInfinity($relatedInfinity)
+    {
+        $this->relatedInfinity = $relatedInfinity;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getRelatedInfinity()
+    {
+        return $this->relatedInfinity;
     }
 }
 ?>

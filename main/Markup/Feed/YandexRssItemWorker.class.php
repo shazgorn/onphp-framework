@@ -127,6 +127,17 @@ final class YandexRssItemWorker extends Singleton implements FeedItemWorker
                 )
                 : null
             )
+            .(
+                count($item->getRelated())
+                ? (
+                    '<yandex:related' . ($item->getRelatedInfinity() ? ' type="infinity"' : '') . '>'
+                    . join('', array_map(function($el) {
+                        return '<link url="' . $el['url'] . '"' . ($el['img'] ? ' img="' . $el['img'] . '"' : '') . '>' . $el['value'] . '</link>';
+                    }, $item->getRelated()))
+                    . '</yandex:related>'
+                )
+                : null
+            )
             .'</item>';
     }
 }

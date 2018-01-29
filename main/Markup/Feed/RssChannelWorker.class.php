@@ -75,6 +75,18 @@ final class RssChannelWorker extends Singleton implements FeedChannelWorker
                 .'</description>'
                 : null
             )
+            . ($channel->getLanguage()
+               ?
+               '<language>'
+               . $channel->getLanguage()
+               . '</language>'
+               : null)
+            . ($channel->getLastBuildDate()
+               ?
+               '<lastBuildDate>'
+               . date('r', $channel->getLastBuildDate()->toStamp())
+               . '</lastBuildDate>'
+               : null)
             .$itemsXml
             .'</channel>'
             .'</rss>';
