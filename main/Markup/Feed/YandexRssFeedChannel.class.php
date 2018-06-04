@@ -44,7 +44,8 @@ class YandexRssFeedChannel extends FeedChannel
 
     protected $places = [
         0 => 'first_ad_place',
-        1 => 'second_ad_place'
+        1 => 'second_ad_place',
+        2 => 'third_ad_place'
     ];
 
     /**
