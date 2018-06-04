@@ -9,79 +9,79 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Filters
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Filters
+ **/
+namespace Onphp;
 
-	final class StringReplaceFilter implements Filtrator
-	{
-		private $search		= null;
-		private $replace	= null;
+final class StringReplaceFilter implements Filtrator
+{
+    private $search		= null;
+    private $replace	= null;
 		
-		private $count		= null;
+    private $count		= null;
 		
-		/**
-		 * @return \Onphp\StringReplaceFilter
-		**/
-		public static function create($search = null, $replace = null)
-		{
-			return new self($search, $replace);
-		}
+    /**
+     * @return \Onphp\StringReplaceFilter
+     **/
+    public static function create($search = null, $replace = null)
+    {
+        return new self($search, $replace);
+    }
 		
-		public function __construct($search = null, $replace = null)
-		{
-			$this->search = $search;
-			$this->replace = $replace;
-		}
+    public function __construct($search = null, $replace = null)
+    {
+        $this->search = $search;
+        $this->replace = $replace;
+    }
 		
-		/**
-		 * @return \Onphp\StringReplaceFilter
-		**/
-		public function setSearch($search)
-		{
-			$this->search = $search;
+    /**
+     * @return \Onphp\StringReplaceFilter
+     **/
+    public function setSearch($search)
+    {
+        $this->search = $search;
 			
-			return $this;
-		}
+        return $this;
+    }
 		
-		public function getSearch()
-		{
-			return $this->search;
-		}
+    public function getSearch()
+    {
+        return $this->search;
+    }
 		
-		/**
-		 * @return \Onphp\StringReplaceFilter
-		**/
-		public function setReplace($replace)
-		{
-			$this->replace = $replace;
+    /**
+     * @return \Onphp\StringReplaceFilter
+     **/
+    public function setReplace($replace)
+    {
+        $this->replace = $replace;
 			
-			return $this;
-		}
+        return $this;
+    }
 		
-		public function getReplace()
-		{
-			return $this->replace;
-		}
+    public function getReplace()
+    {
+        return $this->replace;
+    }
 		
-		public function getCount()
-		{
-			return $this->count;
-		}
+    public function getCount()
+    {
+        return $this->count;
+    }
 		
-		public function apply($value)
-		{
-			if ($this->search === $this->replace)
-				return $value;
+    public function apply($value)
+    {
+        if ($this->search === $this->replace)
+            return $value;
 			
-			return
-				str_replace(
-					$this->search,
-					$this->replace,
-					$value,
-					$this->count
-				);
-		}
-	}
+        return
+            str_replace(
+                $this->search,
+                $this->replace,
+                $value,
+                $this->count
+            );
+    }
+}
 ?>

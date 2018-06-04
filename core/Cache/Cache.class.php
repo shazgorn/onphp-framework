@@ -94,10 +94,11 @@ final class Cache extends StaticFactory implements Instantiatable
             if (isset(self::$map[$class])) {
                 $className = self::$map[$class];
                 self::$instances[$class] = new $className($dao);
-            } elseif ($worker = self::$worker)
+            } elseif ($worker = self::$worker) {
                   self::$instances[$class] = new $worker($dao);
-            else
+            } else {
                 self::$instances[$class] = new CommonDaoWorker($dao);
+            }
         }
 
         return self::$instances[$class];
