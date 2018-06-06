@@ -19,11 +19,21 @@ final class DebugUtils extends StaticFactory
     private static $memoryAccumulator = 0;
     private static $currentMemory = null;
 
-    public static function e_dump($e)
+    public static function edump($e)
     {
-        echo get_class($e) . '(' . $e->getMessage() . ")\n";
+        $error = "#E " . __METHOD__ . '()';
+        $dbt = debug_backtrace()[1] ?? debug_backtrace()[0];
+        if (isset($dbt['file']) && isset($dbt['line'])) {
+            $error .= ' ' . $dbt['file'] . '(' . $dbt['line'] . '): ';
+        }
+        if (isset($dbt['class'])) {
+            $error .= $dbt['class'] . '->';
+        }
+        $error .= $dbt['function'] . '()';
+        $error .= "\n";
+        $error .= "#M " . get_class($e) . '(' . $e->getMessage() . ")\n";
         foreach ($e->getTrace() as $i => $line) {
-            $error = '#' . $i;
+            $error .= '#' . $i . ($i < 10 ? ' ' : '');
             $error .= (isset($line['file']) ? ' ' . $line['file'] : '');
             $error .= (isset($line['line']) ? '(' . $line['line'] . '):' : '');
             $error .= (isset($line['class']) ? ' ' . $line['class'] : '');
@@ -42,8 +52,9 @@ final class DebugUtils extends StaticFactory
                     return var_export($arg, true);
                 }
             }, $line['args'])) . ')';
-            echo "$error\n";
+            $error .= "\n";
         }
+        echo $error;
     }
 
     public static function el($vr, $prefix = null)
