@@ -19,6 +19,7 @@ final class RouterRegexpRule extends RouterBaseRule
 
     protected $map		= array();
     protected $values	= array();
+    protected $unicode  = null;
 
     /**
      * @return \Onphp\RouterRegexpRule
@@ -32,6 +33,16 @@ final class RouterRegexpRule extends RouterBaseRule
     {
         $this->route = $route;
         $this->regexp = '#^' . $this->route . '$#i';
+    }
+
+    /**
+     * @return \Onphp\RouterRegexpRule
+     **/
+    public function addFlags($flags)
+    {
+        $this->regexp .= $flags;
+
+        return $this;
     }
 
     /**
