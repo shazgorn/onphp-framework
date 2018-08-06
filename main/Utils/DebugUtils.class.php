@@ -39,19 +39,21 @@ final class DebugUtils extends StaticFactory
             $error .= (isset($line['class']) ? ' ' . $line['class'] : '');
             $error .= (isset($line['type']) ? $line['type'] : '');
             $error .= $line['function'];
-            $error .= '(' . implode(', ', array_map(function($arg) {
-                if (is_integer($arg)) {
-                    return $arg;
-                } elseif (is_string($arg)) {
-                    return "'$arg'";
-                } elseif (is_array($arg)) {
-                    return 'Array';
-                } elseif (is_object($arg)) {
-                    return get_class($arg);
-                } else {
-                    return var_export($arg, true);
-                }
-            }, $line['args'])) . ')';
+            if (isset($line['args'])) {
+                $error .= '(' . implode(', ', array_map(function($arg) {
+                    if (is_integer($arg)) {
+                        return $arg;
+                    } elseif (is_string($arg)) {
+                        return "'$arg'";
+                    } elseif (is_array($arg)) {
+                        return 'Array';
+                    } elseif (is_object($arg)) {
+                        return get_class($arg);
+                    } else {
+                        return var_export($arg, true);
+                    }
+                }, $line['args'])) . ')';
+            }
             $error .= "\n";
         }
         echo $error;
