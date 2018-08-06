@@ -251,5 +251,16 @@ final class ClassUtils extends StaticFactory
             }
         }
     }
+
+    /**
+     * Get class name without namespace
+     * @param string $className
+     * @return string
+     */
+    public static function classNameWONS($className)
+    {
+        $path = explode('\\', $className);
+        return array_pop($path);
+    }
 }
 ?>
