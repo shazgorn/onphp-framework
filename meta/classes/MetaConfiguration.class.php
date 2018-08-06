@@ -31,6 +31,9 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
     private $checkEnumerationRefIntegrity = false;
 
+    /** @var bool */
+    private $noDBCheck = false;
+
     /**
      * @return \Onphp\MetaConfiguration
      **/
@@ -83,6 +86,13 @@ final class MetaConfiguration extends Singleton implements Instantiatable
     public function setWithEnumerationRefIntegrityCheck($orly)
     {
         $this->checkEnumerationRefIntegrity = $orly;
+
+        return $this;
+    }
+
+    public function setNoDBCheck($noDBCheck)
+    {
+        $this->noDBCheck = $noDBCheck;;
 
         return $this;
     }
@@ -395,10 +405,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                     && ($property->getRelationId() != MetaRelation::ONE_TO_ONE)
                 ) {
                     $userFile =
-                        ONPHP_META_DAO_DIR
-                        .$class->getName().ucfirst($property->getName())
-                        .'DAO'
-                        .EXT_CLASS;
+                              ONPHP_META_DAO_DIR
+                              .$class->getName().ucfirst($property->getName())
+                              .'DAO'
+                              .EXT_CLASS;
 
                     if ($force || !file_exists($userFile)) {
                         BasePattern::dumpFile(
@@ -414,12 +424,12 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
                     // check for old-style naming
                     $oldStlye =
-                        ONPHP_META_DAO_DIR
-                        .$class->getName()
-                        .'To'
-                        .$property->getType()->getClassName()
-                        .'DAO'
-                        .EXT_CLASS;
+                              ONPHP_META_DAO_DIR
+                              .$class->getName()
+                              .'To'
+                              .$property->getType()->getClassName()
+                              .'DAO'
+                              .EXT_CLASS;
 
                     if (is_readable($oldStlye)) {
                         $out->
@@ -440,10 +450,11 @@ final class MetaConfiguration extends Singleton implements Instantiatable
      **/
     public function checkIntegrity()
     {
-        $out = $this->getOutput()->
-            newLine()->
-            infoLine('Checking sanity of generated files: ')->
-            newLine();
+        $out = $this->getOutput()
+             ->newLine()
+             ->infoLine('Checking sanity of generated files: ')
+             ->infoLine('C - clone/serialize, F - FormUtils::object2form, H - dao::makeSelectHead, T - FormUtils::form2object')
+             ->newLine();
 
         AutoloaderPool::get('onPHP')->
             addPaths(array(
@@ -455,13 +466,13 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 ONPHP_META_AUTO_PROTO_DIR,
             ), 'Onphp');
 
-        $out->info("\t");
+        //$out->info("\t");
 
         $formErrors = array();
 
         foreach ($this->classes as $name => $class) {
             /** @var $class MetaClass */
-            echo $class->getFullClassName(), "\n";
+            echo "\t", $class->getFullClassName(), "\n";
             if (
                 !(
                     $class->getPattern() instanceof SpookedClassPattern
@@ -562,6 +573,9 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                     'identifier name mismatch in '.$class->getFullClassName().' class'
                 );
 
+                if ($this->noDBCheck) {
+                    continue;
+                }
                 try {
                     DBPool::getByDao($dao);
                 } catch (MissingElementException $e) {
@@ -571,11 +585,11 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 }
 
                 $query =
-                    Criteria::create($dao)->
-                    setLimit(1)->
-                    add(Expression::notNull($class->getIdentifier()->getName()))->
-                    addOrder($class->getIdentifier()->getName())->
-                    toSelectQuery();
+                       Criteria::create($dao)->
+                       setLimit(1)->
+                       add(Expression::notNull($class->getIdentifier()->getName()))->
+                       addOrder($class->getIdentifier()->getName())->
+                       toSelectQuery();
 
                 $out->warning(
                     ' ('
@@ -602,7 +616,6 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
                     if ($errors = $form->getErrors()) {
                         $formErrors[$class->getFullClassName()] = $errors;
-
                         $out->error('F', true);
                     } else
                         $out->info('F', true);
@@ -745,10 +758,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             as $filename
         ) {
             $name =
-                substr(
-                    basename($filename, $postStrip.EXT_CLASS),
-                    strlen($preStrip)
-                );
+                  substr(
+                      basename($filename, $postStrip.EXT_CLASS),
+                      strlen($preStrip)
+                  );
 
             if (!isset($this->classes[$name])) {
                 $out->warning(
@@ -784,9 +797,9 @@ final class MetaConfiguration extends Singleton implements Instantiatable
         $name = (string) $source['name'];
 
         $default =
-            isset($source['default']) && (string) $source['default'] == 'true'
-            ? true
-            : false;
+                 isset($source['default']) && (string) $source['default'] == 'true'
+                 ? true
+                 : false;
 
         Assert::isFalse(
             isset($this->sources[$name]),
@@ -1030,7 +1043,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
             Assert::isFalse(
                 isset($this->classes[$name]),
-                'class name collision found for '.$name
+                'Class name collision found for ' . $name . ' in \'' . $metafile . '\''
             );
 
             $class = new MetaClass($name, $namespace);
@@ -1385,10 +1398,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             $ids[$enumerationObject->getId()] = $enumerationObject->getName();
 
         $rows =
-            $db->querySet(
-                OSQL::select()->from($tableName)->
-                multiGet('id', 'name')
-            );
+              $db->querySet(
+                  OSQL::select()->from($tableName)->
+                  multiGet('id', 'name')
+              );
 
         echo "\n";
 
@@ -1400,10 +1413,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                     echo "Class '{$class}',id: {$row['id']} sync names. \n";
 
                     $updateQueries .=
-                        OSQL::update($tableName)->
-                        set('name', $ids[$row['id']])->
-                        where(Expression::eq('id', $row['id']))->
-                        toDialectString($db->getDialect()) . ";\n";
+                                   OSQL::update($tableName)->
+                                   set('name', $ids[$row['id']])->
+                                   where(Expression::eq('id', $row['id']))->
+                                   toDialectString($db->getDialect()) . ";\n";
                 }
 
                 unset($ids[$row['id']]);
