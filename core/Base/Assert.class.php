@@ -262,7 +262,7 @@ final class Assert extends StaticFactory
     {
         if (!class_exists($className, true))
             throw new WrongArgumentException(
-                $message.', class "'.$className.'" does not exists'
+                ($message ? $message . '. ' : '') . 'Class "'.$className.'" does not exists'
             );
     }
 
