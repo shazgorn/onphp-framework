@@ -9,83 +9,83 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Primitives
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Primitives
+ **/
+namespace Onphp;
 
-	class PrimitiveList extends BasePrimitive implements ListedPrimitive
-	{
-		protected $list = array();
+class PrimitiveList extends BasePrimitive implements ListedPrimitive
+{
+    protected $list = array();
 		
-		public function getChoiceValue()
-		{
-			if ($this->value !== null)
-				return $this->list[$this->value];
+    public function getChoiceValue()
+    {
+        if ($this->value !== null)
+            return $this->list[$this->value];
 			
-			return null;
-		}
+        return null;
+    }
 		
-		public function getActualChoiceValue()
-		{
-			if ($this->value !== null)
-				return $this->list[$this->value];
+    public function getActualChoiceValue()
+    {
+        if ($this->value !== null)
+            return $this->list[$this->value];
 			
-			return $this->list[$this->default];
-		}
+        return $this->list[$this->default];
+    }
 		
-		/**
-		 * @return \Onphp\PrimitiveList
-		**/
-		public function setDefault($default)
-		{
-			Assert::isTrue(
-				$this->list
-				&& array_key_exists(
-					$default,
-					$this->list
-				),
+    /**
+     * @return \Onphp\PrimitiveList
+     **/
+    public function setDefault($default)
+    {
+        Assert::isTrue(
+            $this->list
+            && array_key_exists(
+                $default,
+                $this->list
+            ),
 				
-				'can not find element with such index'
-			);
+            'can not find element with such index'
+        );
 			
-			return parent::setDefault($default);
-		}
+        return parent::setDefault($default);
+    }
 		
-		public function getList()
-		{
-			return $this->list;
-		}
+    public function getList()
+    {
+        return $this->list;
+    }
 		
-		/**
-		 * @return \Onphp\PrimitiveList
-		**/
-		public function setList($list)
-		{
-			$this->list = $list;
+    /**
+     * @return \Onphp\PrimitiveList
+     **/
+    public function setList($list)
+    {
+        $this->list = $list;
 			
-			return $this;
-		}
+        return $this;
+    }
 		
-		public function import($scope)
-		{
-			if (!parent::import($scope)) {
-				return null;
-			}
+    public function import($scope)
+    {
+        if (!parent::import($scope)) {
+            return null;
+        }
 			
-			if (
-				(
-					is_string($scope[$this->name])
-					|| is_integer($scope[$this->name])
-				)
-				&& array_key_exists($scope[$this->name], $this->list)
-			) {
-				$this->value = $scope[$this->name];
+        if (
+            (
+                is_string($scope[$this->name])
+                || is_integer($scope[$this->name])
+            )
+            && array_key_exists($scope[$this->name], $this->list)
+        ) {
+            $this->value = $scope[$this->name];
 				
-				return true;
-			}
+            return true;
+        }
 			
-			return false;
-		}
-	}
+        return false;
+    }
+}
 ?>
