@@ -9,187 +9,187 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * Collection of static header functions.
-	 * 
-	 * @ingroup Http
-	**/
-	namespace Onphp;
+/**
+ * Collection of static header functions.
+ *
+ * @ingroup Http
+ **/
+namespace Onphp;
 
-	final class HeaderUtils extends StaticFactory
-	{
-		private static $headerSent		= false;
-		private static $redirectSent	= false;
-		private static $cacheLifeTime   = 3600;
-		private static $headers			= array();
+final class HeaderUtils extends StaticFactory
+{
+    private static $headerSent		= false;
+    private static $redirectSent	= false;
+    private static $cacheLifeTime   = 3600;
+    private static $headers			= array();
 		
-		public static function redirectRaw($url)
-		{
-			header("Location: {$url}");
+    public static function redirectRaw($url)
+    {
+        header("Location: {$url}");
 
-			self::$headerSent = true;
-			self::$redirectSent = true;
-		}
+        self::$headerSent = true;
+        self::$redirectSent = true;
+    }
 		
-		public static function redirectBack()
-		{
-			if (isset($_SERVER['HTTP_REFERER'])) {
-				header("Location: {$_SERVER['HTTP_REFERER']}");
-				self::$headerSent = true;
-				self::$redirectSent = true;
-				return $_SERVER['HTTP_REFERER'];
-			}
+    public static function redirectBack()
+    {
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            header("Location: {$_SERVER['HTTP_REFERER']}");
+            self::$headerSent = true;
+            self::$redirectSent = true;
+            return $_SERVER['HTTP_REFERER'];
+        }
 
-			return false;
-		}
+        return false;
+    }
 
-		public static function getRequestHeaderList()
-		{
-			if (!empty(self::$headers))
-				return self::$headers;
+    public static function getRequestHeaderList()
+    {
+        if (!empty(self::$headers))
+            return self::$headers;
 
-			if (function_exists('apache_request_headers')) {
-				self::$headers = apache_request_headers();
-			} else {
-				foreach($_SERVER as $key => $value) {
-					if (substr($key, 0, 5) == "HTTP_") {
-						$name = self::extractHeader($key, "_", 5);
-						self::$headers[$name] = $value;
-					}
-				}
-			}
+        if (function_exists('apache_request_headers')) {
+            self::$headers = apache_request_headers();
+        } else {
+            foreach($_SERVER as $key => $value) {
+                if (substr($key, 0, 5) == "HTTP_") {
+                    $name = self::extractHeader($key, "_", 5);
+                    self::$headers[$name] = $value;
+                }
+            }
+        }
 
-			return self::$headers;
-		}
+        return self::$headers;
+    }
 
-		public static function getRequestHeader($name)
-		{
-			$name = self::extractHeader($name, "-", 0);
-			$list = self::getRequestHeaderList();
+    public static function getRequestHeader($name)
+    {
+        $name = self::extractHeader($name, "-", 0);
+        $list = self::getRequestHeaderList();
 
-			if (isset($list[$name]))
-				return $list[$name];
+        if (isset($list[$name]))
+            return $list[$name];
 
-			return null;
-		}
+        return null;
+    }
 		
-		public static function getParsedURI(/* ... */)
-		{
-			if ($num = func_num_args()) {
-				$out = self::getURI();
-				$uri = null;
-				$arr = func_get_args();
+    public static function getParsedURI(/* ... */)
+    {
+        if ($num = func_num_args()) {
+            $out = self::getURI();
+            $uri = null;
+            $arr = func_get_args();
 				
-				for ($i = 0; $i < $num; ++$i)
-					unset($out[$arr[$i]]);
+            for ($i = 0; $i < $num; ++$i)
+                unset($out[$arr[$i]]);
 				
-				foreach ($out as $key => $val) {
-					if (is_array($val)) {
-						foreach ($val as $k => $v)
-							$uri .= "&{$key}[{$k}]={$v}";
-					} else
-						$uri .= "&{$key}={$val}";
-				}
+            foreach ($out as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $k => $v)
+                        $uri .= "&{$key}[{$k}]={$v}";
+                } else
+                    $uri .= "&{$key}={$val}";
+            }
 
-				return $uri;
-			}
+            return $uri;
+        }
 
-			return null;
-		}
+        return null;
+    }
 		
-		public static function sendCachedHeader()
-		{
-			header('Cache-control: private, max-age=3600');
+    public static function sendCachedHeader()
+    {
+        header('Cache-control: private, max-age=3600');
 			
-			header(
-				'Expires: '
-				.date('D, d M Y H:i:s', date('U') + self::$cacheLifeTime)
-				.' GMT'
-			);
+        header(
+            'Expires: '
+            .date('D, d M Y H:i:s', date('U') + self::$cacheLifeTime)
+            .' GMT'
+        );
 			
-			self::$headerSent = true;
-		}
+        self::$headerSent = true;
+    }
 
-		public static function sendNotCachedHeader()
-		{
-			header('Cache-control: no-cache');
-			header(
-				'Expires: '
-				.date('D, d M Y H:i:s', date('U') - self::$cacheLifeTime)
-				.' GMT'
-			);
+    public static function sendNotCachedHeader()
+    {
+        header('Cache-control: no-cache');
+        header(
+            'Expires: '
+            .date('D, d M Y H:i:s', date('U') - self::$cacheLifeTime)
+            .' GMT'
+        );
 			
-			self::$headerSent = true;
-		}
+        self::$headerSent = true;
+    }
 		
-		public static function sendContentLength($length)
-		{
-			Assert::isInteger($length);
+    public static function sendContentLength($length)
+    {
+        Assert::isInteger($length);
 
-			header("Content-Length: {$length}");
+        header("Content-Length: {$length}");
 
-			self::$headerSent = true;
-		}
+        self::$headerSent = true;
+    }
 		
-		public static function sendHttpStatus(HttpStatus $status)
-		{
-			header($status->toString());
+    public static function sendHttpStatus(HttpStatus $status)
+    {
+        header($status->toString());
 
-			self::$headerSent = true;
-		}
+        self::$headerSent = true;
+    }
 
-		public static function isHeaderSent()
-		{
-			return self::$headerSent;
-		}
+    public static function isHeaderSent()
+    {
+        return self::$headerSent;
+    }
 		
-		public static function forceHeaderSent()
-		{
-			self::$headerSent = true;
-		}
+    public static function forceHeaderSent()
+    {
+        self::$headerSent = true;
+    }
 		
-		public static function isRedirectSent()
-		{
-			return self::$redirectSent;
-		}
+    public static function isRedirectSent()
+    {
+        return self::$redirectSent;
+    }
 		
-		public static function setCacheLifeTime($cacheLifeTime)
-		{
-			self::$cacheLifeTime = $cacheLifeTime;
-		}
+    public static function setCacheLifeTime($cacheLifeTime)
+    {
+        self::$cacheLifeTime = $cacheLifeTime;
+    }
 		
-		public static function getCacheLifeTime()
-		{
-			return self::$cacheLifeTime;
-		}
+    public static function getCacheLifeTime()
+    {
+        return self::$cacheLifeTime;
+    }
 
-		private static function getURI()
-		{
-			$out = null;
+    private static function getURI()
+    {
+        $out = null;
 			
-			parse_str($_SERVER['QUERY_STRING'], $out);
+        parse_str($_SERVER['QUERY_STRING'], $out);
 			
-			return $out;
-		}
+        return $out;
+    }
 
-		private static function extractHeader($name, $delimiter, $length)
-		{
-			return
-				str_replace(
-					" ",
-					"-",
-					ucwords(
-						strtolower(
-							str_replace(
-								$delimiter,
-								" ",
-								$length
-									? substr($name, $length)
-									: $name
-							)
-						)
-					)
-				);
-		}
-	}
+    private static function extractHeader($name, $delimiter, $length)
+    {
+        return
+            str_replace(
+                " ",
+                "-",
+                ucwords(
+                    strtolower(
+                        str_replace(
+                            $delimiter,
+                            " ",
+                            $length
+                            ? substr($name, $length)
+                            : $name
+                        )
+                    )
+                )
+            );
+    }
+}
 ?>
