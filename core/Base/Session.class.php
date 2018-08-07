@@ -9,180 +9,180 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @see Session
-	 * 
-	 * @ingroup Base
-	**/
-	namespace Onphp;
+/**
+ * @see Session
+ *
+ * @ingroup Base
+ **/
+namespace Onphp;
 
-	final class SessionNotStartedException extends BaseException
-	{
-		public function __construct()
-		{
-			return
-				parent::__construct(
-					'start session before assign or access session variables'
-				);
-		}
-	}
+final class SessionNotStartedException extends BaseException
+{
+    public function __construct()
+    {
+        return
+            parent::__construct(
+                'start session before assign or access session variables'
+            );
+    }
+}
 	
-	/**
-	 * Simple static wrapper around session_*() functions.
-	 * 
-	 * @ingroup Base
-	**/
-	final class Session extends StaticFactory
-	{
-		private static $isStarted = false;
+/**
+ * Simple static wrapper around session_*() functions.
+ * 
+ * @ingroup Base
+ **/
+final class Session extends StaticFactory
+{
+    private static $isStarted = false;
 		
-		public static function start()
-		{
-			session_start();
-			self::$isStarted = true;
-		}
+    public static function start()
+    {
+        session_start();
+        self::$isStarted = true;
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		/* void */ public static function destroy()
-		{
-			if (!self::$isStarted)
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    /* void */ public static function destroy()
+    {
+        if (!self::$isStarted)
+            throw new SessionNotStartedException();
 			
-			self::$isStarted = false;
+        self::$isStarted = false;
 			
-			try {
-				session_destroy();
-			} catch (BaseException $e) {
-				// stfu
-			}
+        try {
+            session_destroy();
+        } catch (BaseException $e) {
+            // stfu
+        }
 			
-			setcookie(session_name(), null, 0, '/');
-		}
+        setcookie(session_name(), null, 0, '/');
+    }
 		
-		public static function flush()
-		{
-			return session_unset();
-		}
+    public static function flush()
+    {
+        return session_unset();
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		/* void */ public static function assign($var, $val)
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    /* void */ public static function assign($var, $val)
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			$_SESSION[$var] = $val;
-		}
+        $_SESSION[$var] = $val;
+    }
 		
-		/**
-		 * @throws \Onphp\WrongArgumentException
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		public static function exist(/* ... */)
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\WrongArgumentException
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    public static function exist(/* ... */)
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			if (!func_num_args())
-				throw new WrongArgumentException('missing argument(s)');
+        if (!func_num_args())
+            throw new WrongArgumentException('missing argument(s)');
 			
-			foreach (func_get_args() as $arg) {
-				if (!isset($_SESSION[$arg]))
-					return false;
-			}
+        foreach (func_get_args() as $arg) {
+            if (!isset($_SESSION[$arg]))
+                return false;
+        }
 			
-			return true;
-		}
+        return true;
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		public static function get($var)
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    public static function get($var)
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			return isset($_SESSION[$var]) ? $_SESSION[$var] : null;
-		}
+        return isset($_SESSION[$var]) ? $_SESSION[$var] : null;
+    }
 		
-		public static function &getAll()
-		{
-			return $_SESSION;
-		}
+    public static function &getAll()
+    {
+        return $_SESSION;
+    }
 		
-		/**
-		 * @throws \Onphp\WrongArgumentException
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		/* void */ public static function drop(/* ... */)
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\WrongArgumentException
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    /* void */ public static function drop(/* ... */)
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			if (!func_num_args())
-				throw new WrongArgumentException('missing argument(s)');
+        if (!func_num_args())
+            throw new WrongArgumentException('missing argument(s)');
 			
-			foreach (func_get_args() as $arg)
-				unset($_SESSION[$arg]);
-		}
+        foreach (func_get_args() as $arg)
+            unset($_SESSION[$arg]);
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		/* void */ public static function dropAll()
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    /* void */ public static function dropAll()
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			if ($_SESSION) {
-				foreach (array_keys($_SESSION) as $key) {
-					self::drop($key);
-				}
-			}
-		}
+        if ($_SESSION) {
+            foreach (array_keys($_SESSION) as $key) {
+                self::drop($key);
+            }
+        }
+    }
 		
-		public static function isStarted()
-		{
-			return self::$isStarted;
-		}
+    public static function isStarted()
+    {
+        return self::$isStarted;
+    }
 		
-		/**
-		 * assigns to $_SESSION scope variables defined in given array
-		**/
-		/* void */ public static function arrayAssign($scope, $array)
-		{
-			Assert::isArray($array);
+    /**
+     * assigns to $_SESSION scope variables defined in given array
+     **/
+    /* void */ public static function arrayAssign($scope, $array)
+    {
+        Assert::isArray($array);
 			
-			foreach ($array as $var) {
-				if (isset($scope[$var])) {
-					$_SESSION[$var] = $scope[$var];
-				}
-			}
-		}
+        foreach ($array as $var) {
+            if (isset($scope[$var])) {
+                $_SESSION[$var] = $scope[$var];
+            }
+        }
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		public static function getName()
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    public static function getName()
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			return session_name();
-		}
+        return session_name();
+    }
 		
-		/**
-		 * @throws \Onphp\SessionNotStartedException
-		**/
-		public static function getId()
-		{
-			if (!self::isStarted())
-				throw new SessionNotStartedException();
+    /**
+     * @throws \Onphp\SessionNotStartedException
+     **/
+    public static function getId()
+    {
+        if (!self::isStarted())
+            throw new SessionNotStartedException();
 			
-			return session_id();
-		}
-	}
+        return session_id();
+    }
+}
 ?>
