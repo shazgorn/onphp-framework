@@ -31,7 +31,7 @@
 		{
 			Assert::classExists($controllerName);
 			
-			$this->url = $controllerName;
+			$this->url = ClassUtils::classNameWONS($controllerName);
 		}
 		
 		public function getPrefix()
