@@ -453,7 +453,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
         $out = $this->getOutput()
              ->newLine()
              ->infoLine('Checking sanity of generated files: ')
-             ->infoLine('C - clone/serialize, F - FormUtils::object2form, H - dao::makeSelectHead, T - FormUtils::form2object')
+             ->infoLine('(Fields / Tables / C - clone, serialize / F - FormUtils::object2form / H - dao::makeSelectHead / T - FormUtils::form2object)')
              ->newLine();
 
         AutoloaderPool::get('onPHP')->
@@ -472,7 +472,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
         foreach ($this->classes as $name => $class) {
             /** @var $class MetaClass */
-            echo "\t", $class->getFullClassName(), "\n";
+
             if (
                 !(
                     $class->getPattern() instanceof SpookedClassPattern
@@ -487,8 +487,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
 
                 $info = new \ReflectionClass($class->getFullClassName());
 
-                $this->
-                    checkClassSanity($class, $info);
+                $this->checkClassSanity($class, $info);
 
                 if ($info->implementsInterface('\Onphp\Prototyped'))
                     $this->checkClassSanity(
@@ -651,6 +650,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 }
 
                 $out->warning(')')->info(', ');
+                $out->newLine('');
             }
         }
 

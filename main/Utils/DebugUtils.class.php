@@ -19,6 +19,40 @@ final class DebugUtils extends StaticFactory
     private static $memoryAccumulator = 0;
     private static $currentMemory = null;
 
+    public static function traceLine($i, $line)
+    {
+        $error = '#' . $i . ($i < 10 ? ' ' : '');
+        $error .= (isset($line['file']) ? ' ' . $line['file'] : '');
+        $error .= (isset($line['line']) ? '(' . $line['line'] . '):' : '');
+        $error .= (isset($line['class']) ? ' ' . $line['class'] : '');
+        $error .= (isset($line['type']) ? $line['type'] : '');
+        $error .= $line['function'];
+        if (isset($line['args'])) {
+            $error .= '(' . implode(', ', array_map(function($arg) {
+                if (is_integer($arg)) {
+                    return $arg;
+                } elseif (is_string($arg)) {
+                    return "'$arg'";
+                } elseif (is_array($arg)) {
+                    return 'Array';
+                } elseif (is_object($arg)) {
+                    return get_class($arg);
+                } else {
+                    return var_export($arg, true);
+                }
+            }, $line['args'])) . ')';
+        }
+        $error .= "\n";
+        return $error;
+    }
+
+    public static function trace()
+    {
+        foreach (debug_backtrace() as $i => $line) {
+            echo static::traceLine($i, $line);
+        }
+    }
+
     public static function edump($e)
     {
         $error = "#E " . __METHOD__ . '()';
@@ -33,28 +67,7 @@ final class DebugUtils extends StaticFactory
         $error .= "\n";
         $error .= "#M " . get_class($e) . '(' . $e->getMessage() . ")\n";
         foreach ($e->getTrace() as $i => $line) {
-            $error .= '#' . $i . ($i < 10 ? ' ' : '');
-            $error .= (isset($line['file']) ? ' ' . $line['file'] : '');
-            $error .= (isset($line['line']) ? '(' . $line['line'] . '):' : '');
-            $error .= (isset($line['class']) ? ' ' . $line['class'] : '');
-            $error .= (isset($line['type']) ? $line['type'] : '');
-            $error .= $line['function'];
-            if (isset($line['args'])) {
-                $error .= '(' . implode(', ', array_map(function($arg) {
-                    if (is_integer($arg)) {
-                        return $arg;
-                    } elseif (is_string($arg)) {
-                        return "'$arg'";
-                    } elseif (is_array($arg)) {
-                        return 'Array';
-                    } elseif (is_object($arg)) {
-                        return get_class($arg);
-                    } else {
-                        return var_export($arg, true);
-                    }
-                }, $line['args'])) . ')';
-            }
-            $error .= "\n";
+            $error .= static::traceLine($i, $line);
         }
         echo $error;
     }
@@ -130,16 +143,16 @@ final class DebugUtils extends StaticFactory
     public static function errorMav($message = null)
     {
         $uri =
-            (
-                isset($_SERVER['HTTP_HOST'])
-                ? $_SERVER['HTTP_HOST']
-                : null
-            )
-            .(
-                isset($_SERVER['REQUEST_URI'])
-                ? $_SERVER['REQUEST_URI']
-                : null
-            );
+             (
+                 isset($_SERVER['HTTP_HOST'])
+                 ? $_SERVER['HTTP_HOST']
+                 : null
+             )
+             .(
+                 isset($_SERVER['REQUEST_URI'])
+                 ? $_SERVER['REQUEST_URI']
+                 : null
+             );
 
         return
             ModelAndView::create()->
