@@ -38,6 +38,9 @@ Possible options:
 	
 	--with-enum-check-ref-integrity:
 		check enumeration reference integrity [EXPERIMENTAL:for the real nerds].
+
+	--no-migration:
+		do not write migration to separate file.
 		
 	--puml:
 		just create uml diagramm and die.
@@ -137,7 +140,8 @@ $pathConfig = $pathMeta = null;
 $metaForce = $metaOnlyContainers = $metaNoSchema =
            $metaNoSchemaCheck = $metaDropStaleFiles =
            $metaNoIntegrityCheck = $metaDryRun = 
-           $metaCheckEnumerationRefIntegrity = $metaNoColor = $createPUML = $noDBCheck = false;
+           $metaCheckEnumerationRefIntegrity = $metaNoColor =
+           $createPUML = $noDBCheck = $noMigration = false;
 	
 $args = $_SERVER['argv'];
 array_shift($args);
@@ -184,6 +188,10 @@ if ($args) {
 					
                 case '--with-enum-check-ref-integrity':
                     $metaCheckEnumerationRefIntegrity = true;
+                    break;
+
+                case '--no-migration':
+                    $noMigration = true;
                     break;
 					
                 case '--puml':
@@ -299,10 +307,12 @@ if ($pathMeta && $pathConfig) {
 		
     try {
         $meta =
-              MetaConfiguration::me()->
-              setOutput($out)->
-              load(ONPHP_META_PATH.'internal.xml', false);
-			
+              MetaConfiguration::me()
+              ->setOutput($out)
+              ->load(ONPHP_META_PATH.'internal.xml', false);
+        if (!$noMigration) {
+            $meta->setMigrationOut(new MigrationOutput());
+        }
         $out->info('Known internal classes: ');
         foreach ($meta->getClassList() as $class) {
             $out->info($class->getName().', ', true);

@@ -16,7 +16,8 @@ namespace Onphp;
 
 final class MetaConfiguration extends Singleton implements Instantiatable
 {
-    private $out = null;
+    private $out          = null;
+    private $migrationOut = null;
 
     private $classes = array();
     private $sources = array();
@@ -341,12 +342,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             try {
                 $db = DBPool::me()->getLink($class->getSourceLink());
             } catch (BaseException $e) {
-                $out->
-                    errorLine(
+                $out->errorLine(
                         'Can not connect using source link in \''
                         .$class->getName().'\' class, skipping this step.'
                     );
-
                 break;
             }
 
@@ -366,7 +365,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             } catch (ObjectNotFoundException $e) {
                 $out->errorLine("Table '{$class->getTableName()}' not found");
                 $out->warningLine('Consider creating one:');
-                $out->warningLine($this->migrate($target->toDialectString($db->getDialect())));
+                $out->warningLine($this->writeMigrate($target->toDialectString($db->getDialect())));
                 $out->warningLine('skipping');
                 continue;
             }
@@ -377,7 +376,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             );
             if ($diff) {
                 foreach ($diff as $line)
-                    $out->warningLine($line);
+                    $out->warningLine($this->writeMigrateLine($line));
 
                 $out->newLine();
             }
@@ -728,6 +727,36 @@ final class MetaConfiguration extends Singleton implements Instantiatable
     public function getOutput()
     {
         return $this->out;
+    }
+
+    public function getMigrationOut()
+    {
+        return $this->migrationOut;
+    }
+
+    public function setMigrationOut($migrationOut)
+    {
+        $this->migrationOut = $migrationOut;
+
+        return $this;
+    }
+
+    public function writeMigrate($text)
+    {
+        if ($this->migrationOut) {
+            $this->migrationOut->write($text);
+        }
+
+        return $text;
+    }
+
+    public function writeMigrateLine($text)
+    {
+        if ($this->migrationOut) {
+            $this->migrationOut->writeLine($text);
+        }
+
+        return $text;
     }
 
     public function makePUML()
