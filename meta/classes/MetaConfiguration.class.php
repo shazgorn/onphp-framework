@@ -311,6 +311,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
      **/
     public function buildSchemaChanges()
     {
+        /** @var \Onphp\MetaOutput $out */
         $out = $this->getOutput();
         $out->
             newLine()->
@@ -327,7 +328,6 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 $class->getTypeId() == MetaClassType::CLASS_ABSTRACT
                 || $class->getPattern() instanceof EnumerationClassPattern
                 || $class->getPattern() instanceof EnumClassPattern
-
             )
                 continue;
 
@@ -350,32 +350,31 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 break;
             }
 
-            try {
-                $source = $db->getTableInfo($class->getTableName());
-            } catch (UnsupportedMethodException $e) {
-                $out->
-                    errorLine(
-                        get_class($db)
-                        .' does not support tables introspection yet.',
-
-                        true
-                    );
-
-                break;
-            } catch (ObjectNotFoundException $e) {
-                $out->errorLine("table '{$class->getTableName()}' not found");
-                $out->warningLine('Consider creating one:');
-                $out->warningLine($target->toDialectString($db->getDialect()));
-                $out->warningLine('skipping');
+            if ($class->getPattern()->isView()) {
+                // no need for diffing views
                 continue;
             }
 
+            try {
+                $source = $db->getTableInfo($class->getTableName());
+            } catch (UnsupportedMethodException $e) {
+                $out->errorLine(
+                        get_class($db) . ' does not support tables introspection yet.',
+                        true
+                    );
+                break;
+            } catch (ObjectNotFoundException $e) {
+                $out->errorLine("Table '{$class->getTableName()}' not found");
+                $out->warningLine('Consider creating one:');
+                $out->warningLine($this->migrate($target->toDialectString($db->getDialect())));
+                $out->warningLine('skipping');
+                continue;
+            }
             $diff = DBTable::findDifferences(
                 $db->getDialect(),
                 $source,
                 $target
             );
-
             if ($diff) {
                 foreach ($diff as $line)
                     $out->warningLine($line);
@@ -395,8 +394,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
         $force = $this->isForcedGeneration();
 
         $out = $this->getOutput();
-        $out->
-            infoLine('Building containers: ');
+        $out->infoLine('Building containers: ');
 
         foreach ($this->classes as $class) {
             foreach ($class->getProperties() as $property) {
@@ -625,9 +623,9 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 $out->warning('/');
 
                 if (
-                    Criteria::create($dao)->
-                    setFetchStrategy(FetchStrategy::cascade())->
-                    toSelectQuery()
+                    Criteria::create($dao)
+                    ->setFetchStrategy(FetchStrategy::cascade())
+                    ->toSelectQuery()
                     == $dao->makeSelectHead()
                 ) {
                     $out->info('H', true);
@@ -1220,9 +1218,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                             Assert::isTrue(
                                 $property->getRelationId()
                                 == MetaRelation::ONE_TO_ONE,
-
-                                'fetch mode can be specified
-									only for OneToOne relations'
+                                'fetch mode can be specified only for OneToOne relations'
                             );
 
                             if ($fetch == 'lazy')

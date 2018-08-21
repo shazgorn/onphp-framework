@@ -50,6 +50,7 @@
 			DictionaryClass
 			|AbstractClass
 			|StraightMapping
+                        |ViewMapping
 			|EnumerationClass
 			|EnumClass
 			|SpookedClass

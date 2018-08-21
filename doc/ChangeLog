@@ -1,3 +1,11 @@
+2018-08-21 Vitaliy A. Trofimov
+
+	* meta/patterns/ViewMappingPattern
+
+2018-08-12 Vitaliy A. Trofimov
+
+	* build.php: add --no-dbcheck
+
 2013-12-06 Evgeny V. Kokovikhin
 	
 	* core/Form/FormUtils.class.php core/OSQL/QuerySkeleton.class.php

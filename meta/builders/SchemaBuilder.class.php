@@ -9,106 +9,106 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * @ingroup Builders
-	**/
-	namespace Onphp;
+/**
+ * @ingroup Builders
+ **/
+namespace Onphp;
 
-	final class SchemaBuilder extends BaseBuilder
-	{
-		public static function buildTable($tableName, array $propertyList)
-		{
-			$out = <<<EOT
+final class SchemaBuilder extends BaseBuilder
+{
+    public static function buildTable($tableName, array $propertyList)
+    {
+        $out = <<<EOT
 \$schema->
 	addTable(
 		\Onphp\DBTable::create('{$tableName}')->
 
 EOT;
 
-			$columns = array();
+        $columns = array();
 			
-			foreach ($propertyList as $property) {
-				if (
-					$property->getRelation()
-					&& ($property->getRelationId() != MetaRelation::ONE_TO_ONE)
-				) {
-					continue;
-				}
+        foreach ($propertyList as $property) {
+            if (
+                $property->getRelation()
+                && ($property->getRelationId() != MetaRelation::ONE_TO_ONE)
+            ) {
+                continue;
+            }
 				
-				$column = $property->toColumn();
+            $column = $property->toColumn();
 				
-				if (is_array($column))
-					$columns = array_merge($columns, $column);
-				else
-					$columns[] = $property->toColumn();
-			}
+            if (is_array($column))
+                $columns = array_merge($columns, $column);
+            else
+                $columns[] = $property->toColumn();
+        }
 			
-			$out .= implode("->\n", $columns);
+        $out .= implode("->\n", $columns);
 			
-			return $out."\n);\n\n";
-		}
+        return $out."\n);\n\n";
+    }
 		
-		public static function buildRelations(MetaClass $class)
-		{
-			$out = null;
+    public static function buildRelations(MetaClass $class)
+    {
+        $out = null;
 			
-			$knownJunctions = array();
-			
-			foreach ($class->getAllProperties() as $property) {
-				if ($relation = $property->getRelation()) {
+        $knownJunctions = array();
+        /** @var \Onphp\MetaClassProperty $property */
+        foreach ($class->getAllProperties() as $property) {
+            if ($relation = $property->getRelation()) {
 					
-					$foreignClass = $property->getType()->getClass();
+                $foreignClass = $property->getType()->getClass();
 					
-					if (
-						$relation->getId() == MetaRelation::ONE_TO_MANY
-						// nothing to build, it's in the same table
-						// or table does not exist at all
-						|| !$foreignClass->getPattern()->tableExists()
-						// no need to process them
-						|| $class->getParent()
-					) {
-						continue;
-					} elseif (
-						$relation->getId() == MetaRelation::MANY_TO_MANY
-					) {
-						$tableName =
-							$class->getTableName()
-							.'_'
-							.$foreignClass->getTableName();
+                if (
+                    $relation->getId() == MetaRelation::ONE_TO_MANY
+                    // nothing to build, it's in the same table
+                    // or table does not exist at all
+                    || !$foreignClass->getPattern()->tableExists()
+                    // no need to process them
+                    || $class->getParent()
+                ) {
+                    continue;
+                } elseif (
+                    $relation->getId() == MetaRelation::MANY_TO_MANY
+                ) {
+                    $tableName =
+                               $class->getTableName()
+                               .'_'
+                               .$foreignClass->getTableName();
 						
-						if (isset($knownJunctions[$tableName]))
-							continue; // collision prevention
-						else
-							$knownJunctions[$tableName] = true;
+                    if (isset($knownJunctions[$tableName]))
+                        continue; // collision prevention
+                    else
+                        $knownJunctions[$tableName] = true;
 						
-						$foreignPropery = clone $foreignClass->getIdentifier();
+                    $foreignPropery = clone $foreignClass->getIdentifier();
 						
-						$name = $class->getName();
-						$name = strtolower($name[0]).substr($name, 1);
-						$name .= 'Id';
+                    $name = $class->getName();
+                    $name = strtolower($name[0]).substr($name, 1);
+                    $name .= 'Id';
 						
-						$foreignPropery->
-							setName($name)->
-							setColumnName($foreignPropery->getConvertedName())->
-							// we don't need primary key here
-							setIdentifier(false);
+                    $foreignPropery->
+                        setName($name)->
+                        setColumnName($foreignPropery->getConvertedName())->
+                        // we don't need primary key here
+                        setIdentifier(false);
 						
-						// we don't want any garbage in such tables
-						$property = clone $property;
-						$property->required();
+                    // we don't want any garbage in such tables
+                    $property = clone $property;
+                    $property->required();
 						
-						// prevent name collisions
-						if (
-							$property->getRelationColumnName()
-							== $foreignPropery->getColumnName()
-						) {
-							$foreignPropery->setColumnName(
-								$class->getTableName().'_'
-								.$property->getConvertedName().'_id'
-							);
-						}
+                    // prevent name collisions
+                    if (
+                        $property->getRelationColumnName()
+                        == $foreignPropery->getColumnName()
+                    ) {
+                        $foreignPropery->setColumnName(
+                            $class->getTableName().'_'
+                            .$property->getConvertedName().'_id'
+                        );
+                    }
 						
-						$out .= <<<EOT
+                    $out .= <<<EOT
 \$schema->
 	addTable(
 		\Onphp\DBTable::create('{$tableName}')->
@@ -119,14 +119,15 @@ EOT;
 
 
 EOT;
-					} else {
-						$sourceTable = $class->getTableName();
-						$sourceColumn = $property->getRelationColumnName();
+                } elseif (!$foreignClass->getPattern()->isView()) {
+                    // views cant be referenced
+                    $sourceTable = $class->getTableName();
+                    $sourceColumn = $property->getRelationColumnName();
 						
-						$targetTable = $foreignClass->getTableName();
-						$targetColumn = $foreignClass->getIdentifier()->getColumnName();
+                    $targetTable = $foreignClass->getTableName();
+                    $targetColumn = $foreignClass->getIdentifier()->getColumnName();
 						
-						$out .= <<<EOT
+                    $out .= <<<EOT
 // {$sourceTable}.{$sourceColumn} -> {$targetTable}.{$targetColumn}
 \$schema->
 	getTableByName('{$sourceTable}')->
@@ -142,20 +143,20 @@ EOT;
 
 EOT;
 					
-					}
-				}
-			}
+                }
+            }
+        }
 			
-			return $out;
-		}
+        return $out;
+    }
 		
-		public static function getHead()
-		{
-			$out = parent::getHead();
+    public static function getHead()
+    {
+        $out = parent::getHead();
 			
-			$out .= "\$schema = new \Onphp\DBSchema();\n\n";
+        $out .= "\$schema = new \Onphp\DBSchema();\n\n";
 			
-			return $out;
-		}
-	}
+        return $out;
+    }
+}
 ?>

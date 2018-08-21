@@ -22,7 +22,11 @@ final class DBColumn implements SQLTableName
     private $table      = null;
     private $default    = null;
 
+    /**
+     * @var \Onphp\DBColumn
+     */
     private $reference  = null;
+
     private $onUpdate   = null;
     private $onDelete   = null;
 
@@ -176,7 +180,6 @@ final class DBColumn implements SQLTableName
         }
 
         if ($this->reference) {
-
             $table      = $this->reference->getTable()->getName();
             $column     = $this->reference->getName();
 
