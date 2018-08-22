@@ -180,7 +180,7 @@ final class RussianTextUtils extends StaticFactory
         )
             return 'вчера в '.date('G:i', $date->toStamp());
 
-        return date('j.m.Y в G:i', $date->toStamp());
+        return date('d.m.Y в G:i', $date->toStamp());
     }
 
     public static function friendlyFileSize($size, $precision = 2)
