@@ -333,7 +333,8 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 continue;
 
             try {
-                $target = $schema->getTableByName($class->getTableName());
+                /** @var \Onphp\DBTable $schemaTable */
+                $schemaTable = $schema->getTableByName($class->getTableName());
             } catch (MissingElementException $e) {
                 // dropped or tableless
                 continue;
@@ -355,7 +356,8 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             }
 
             try {
-                $source = $db->getTableInfo($class->getTableName());
+                /** @var \Onphp\DBTable $dbTable */
+                $dbTable = $db->getTableInfo($class->getTableName());
             } catch (UnsupportedMethodException $e) {
                 $out->errorLine(
                         get_class($db) . ' does not support tables introspection yet.',
@@ -365,14 +367,16 @@ final class MetaConfiguration extends Singleton implements Instantiatable
             } catch (ObjectNotFoundException $e) {
                 $out->errorLine("Table '{$class->getTableName()}' not found");
                 $out->warningLine('Consider creating one:');
-                $out->warningLine($this->writeMigrate($target->toDialectString($db->getDialect())));
+                $out->warningLine(
+                    $this->writeMigrate($schemaTable->toDialectString($db->getDialect()))
+                );
                 $out->warningLine('skipping');
                 continue;
             }
             $diff = DBTable::findDifferences(
                 $db->getDialect(),
-                $source,
-                $target
+                $dbTable, // source
+                $schemaTable // target
             );
             if ($diff) {
                 foreach ($diff as $line)
@@ -463,13 +467,10 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 ONPHP_META_AUTO_PROTO_DIR,
             ), 'Onphp');
 
-        //$out->info("\t");
-
         $formErrors = array();
 
+        /** @var $class MetaClass */
         foreach ($this->classes as $name => $class) {
-            /** @var $class MetaClass */
-
             if (
                 !(
                     $class->getPattern() instanceof SpookedClassPattern
@@ -480,7 +481,7 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                     class_exists($class->getFullClassName(), true)
                 )
             ) {
-                $out->info($class->getFullClassName(), true);
+                $out->info("\t\t" . $class->getFullClassName(), true);
 
                 $info = new \ReflectionClass($class->getFullClassName());
 
@@ -1048,12 +1049,11 @@ final class MetaConfiguration extends Singleton implements Instantiatable
                 'can not include '.$file
             );
 
-            $this->getOutput()->
-                infoLine('Including "'.$path.'".')->
-                newLine();
+            $this->getOutput()->infoLine('Including "'.$path.'".');
 
             $this->loadXml($path, !((string) $include['generate'] == 'false'));
         }
+        $this->getOutput()->newLine();
 
         return $this;
     }

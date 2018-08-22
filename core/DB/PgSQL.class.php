@@ -173,10 +173,11 @@ class PgSQL extends DB
     }
 
     /**
+     * @param string $tableName - table name
      * @throws \Onphp\ObjectNotFoundException
      * @return \Onphp\DBTable
      **/
-    public function getTableInfo($table)
+    public function getTableInfo($tableName)
     {
         // field type to data type
         static $types = array(
@@ -218,35 +219,31 @@ class PgSQL extends DB
         );
 
         try {
-            $res = pg_meta_data($this->link, $table);
+            $res = pg_meta_data($this->link, $tableName);
         } catch (BaseException $e) {
             throw new ObjectNotFoundException(
-                "unknown table '{$table}'"
+                "unknown table '{$tableName}'"
             );
         }
 
-        $table = new DBTable($table);
+        $table = new DBTable($tableName);
 
         foreach ($res as $name => $info) {
-
             Assert::isTrue(
                 array_key_exists($info['type'], $types),
-
                 'unknown type "'
-                .$types[$info['type']]
-                .'" found in column "'.$name.'"'
+                . $types[$info['type']]
+                . '" found in column "'.$name.'"'
             );
 
             if (empty($types[$info['type']]))
                 continue;
 
-            $column =
-                new DBColumn(
-                    DataType::create($types[$info['type']])
-                    ->setNull(!$info['not null']),
-                    $name
-                );
-
+            $column = new DBColumn(
+                DataType::create($types[$info['type']])
+                ->setNull(!$info['not null']),
+                $name
+            );
             if ($info['has default']) {
                 $default = $this->queryColumn(
                     OSQL::select()->from('information_schema.columns')
@@ -254,21 +251,31 @@ class PgSQL extends DB
                     ->where(Expression::eq('table_name', $table->getName()))
                     ->andWhere(Expression::eq('column_name', $name))
                 );
-                // skip nextval statements, no autoincrement support for now
+                // skip nextval statements, no autoincrement support at the moment
                 if (strpos($default[0], 'nextval') === false) {
-                    $default = $default[0];
-                    if ($default === 'false') {
-                        $default = false;
-                    } elseif ($default === 'true') {
-                        $default = true;
-                    }
-                    $column->setDefault($default);
+                    $column->setDefault($this->parseDefault($default[0], $types));
                 }
             }
             $table->addColumn($column);
         }
 
         return $table;
+    }
+
+    protected function parseDefault($default)
+    {
+        if ($default === 'false') {
+            return false;
+        } elseif ($default === 'true') {
+            return true;
+        } else {
+            // "0::smallint"
+            if (stripos($default, '::') !== false) {
+                $parts = explode('::', $default);
+                return $parts[0];
+            }
+        }
+        return $default;
     }
 
     /**

@@ -163,7 +163,7 @@
 			return false;
 		}
 		
-		public function getTableInfo($table)
+		public function getTableInfo($tableName)
 		{
 			throw new UnimplementedFeatureException();
 		}

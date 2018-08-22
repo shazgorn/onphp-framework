@@ -54,7 +54,7 @@
 		abstract public function connect();
 		abstract public function disconnect();
 		
-		abstract public function getTableInfo($table);
+		abstract public function getTableInfo($tableName);
 
 		abstract public function queryRaw($queryString);
 

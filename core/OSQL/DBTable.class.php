@@ -159,10 +159,7 @@ final class DBTable implements DialectString
         foreach ($sourceColumns as $name => $column) {
             if (isset($targetColumns[$name])) {
                 $targetColumn = $targetColumns[$name];
-                if (
-                    $column->getType()->getId()
-                    != $targetColumns[$name]->getType()->getId()
-                ) {
+                if ($column->getType()->getId() != $targetColumn->getType()->getId()) {
                     $out[] =
                         $head
                         .' ALTER COLUMN '.$dialect->quoteField($name)
@@ -183,17 +180,14 @@ final class DBTable implements DialectString
                         .';';
                 }
 
-                if (
-                    $column->getDefault()
-                    !== $targetColumns[$name]->getDefault()
-                ) {
+                if ($column->getDefault() != $targetColumn->getDefault()) {
                     if ($column->getDefault() === null && $targetColumn->getDefault() !== null) {
                         $out[] =
                             'UPDATE ' . $dialect->quoteTable($target->getName())
                             . ' SET '
                             . $dialect->quoteField($name)
                             . ' = '
-                            . $dialect->defaultToString($targetColumns[$name])
+                            . $dialect->defaultToString($targetColumn)
                             . ' WHERE ' . $dialect->quoteField($name) . ' IS NULL;';
                     }
                     $out[] =
@@ -208,10 +202,7 @@ final class DBTable implements DialectString
                         . ';';
                 }
 
-                if (
-                    $column->getType()->isNull()
-                    != $targetColumns[$name]->getType()->isNull()
-                ) {
+                if ($column->getType()->isNull() != $targetColumn->getType()->isNull()) {
                     $out[] =
                         $head
                         .' ALTER COLUMN '.$dialect->quoteField($name)

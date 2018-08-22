@@ -167,7 +167,7 @@
 			return $result;
 		}
 		
-		public function getTableInfo($table)
+		public function getTableInfo($tableName)
 		{
 			static $types = array(
 				'tinyint'		=> DataType::SMALLINT,
