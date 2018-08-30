@@ -260,6 +260,9 @@ final class ClassUtils extends StaticFactory
     public static function classNameWONS($className)
     {
         $path = explode('\\', $className);
+        if (!$path) {
+            return $className;
+        }
         return array_pop($path);
     }
 }
