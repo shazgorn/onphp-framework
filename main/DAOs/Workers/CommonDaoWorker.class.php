@@ -37,17 +37,17 @@ class CommonDaoWorker extends BaseDaoWorker
             return $this->dao->completeObject($object);
         } else {
             $query =
-                $this->dao->
-                makeSelectHead()->
-                andWhere(
-                    Expression::eq(
-                        DBField::create(
-                            $this->dao->getIdName(),
-                            $this->dao->getTable()
-                        ),
-                        $id
-                    )
-                );
+                   $this->dao
+                   ->makeSelectHead()
+                   ->andWhere(
+                       Expression::eq(
+                           DBField::create(
+                               $this->dao->getIdName(),
+                               $this->dao->getTable()
+                           ),
+                           $id
+                       )
+                   );
 
             if ($expires === Cache::DO_NOT_CACHE) {
                 $object = $this->fetchObject($query);
@@ -88,15 +88,16 @@ class CommonDaoWorker extends BaseDaoWorker
             ($expires !== Cache::DO_NOT_CACHE)
             && ($object = $this->getCachedByQuery($query))
         ) {
-            if ($object === Cache::NOT_FOUND)
+            if ($object === Cache::NOT_FOUND) {
                 throw new CachedObjectNotFoundException();
-
+            }
             return $this->dao->completeObject($object);
         } else {
-            if ($expires === Cache::DO_NOT_CACHE)
+            if ($expires === Cache::DO_NOT_CACHE) {
                 $object = $this->fetchObject($query);
-            else
+            } else {
                 $object = $this->cachedFetchObject($query, $expires, false);
+            }
 
             if ($object)
                 return $object;
@@ -203,19 +204,19 @@ class CommonDaoWorker extends BaseDaoWorker
             if ($toFetch) {
                 try {
                     $list =
-                        array_merge(
-                            $list,
-                            $this->getListByLogic(
-                                Expression::in(
-                                    new DBField(
-                                        $this->dao->getIdName(),
-                                        $this->dao->getTable()
-                                    ),
-                                    $toFetch
-                                ),
-                                Cache::DO_NOT_CACHE
-                            )
-                        );
+                          array_merge(
+                              $list,
+                              $this->getListByLogic(
+                                  Expression::in(
+                                      new DBField(
+                                          $this->dao->getIdName(),
+                                          $this->dao->getTable()
+                                      ),
+                                      $toFetch
+                                  ),
+                                  Cache::DO_NOT_CACHE
+                              )
+                          );
                 } catch (ObjectNotFoundException $e) {
                     // nothing to fetch
                 }
@@ -223,16 +224,16 @@ class CommonDaoWorker extends BaseDaoWorker
         } elseif (count($ids)) {
             try {
                 $list =
-                    $this->getListByLogic(
-                        Expression::in(
-                            new DBField(
-                                $this->dao->getIdName(),
-                                $this->dao->getTable()
-                            ),
-                            $ids
-                        ),
-                        Cache::DO_NOT_CACHE
-                    );
+                      $this->getListByLogic(
+                          Expression::in(
+                              new DBField(
+                                  $this->dao->getIdName(),
+                                  $this->dao->getTable()
+                              ),
+                              $ids
+                          ),
+                          Cache::DO_NOT_CACHE
+                      );
             } catch (ObjectNotFoundException $e) {/*_*/}
         }
 
@@ -396,10 +397,10 @@ class CommonDaoWorker extends BaseDaoWorker
             $count = clone $query;
 
             $count =
-                DBPool::getByDao($this->dao)->queryRow(
-                    $count->dropFields()->dropOrder()->limit(null, null)->
-                    get(SQLFunction::create('COUNT', '*')->setAlias('count'))
-                );
+                   DBPool::getByDao($this->dao)->queryRow(
+                       $count->dropFields()->dropOrder()->limit(null, null)->
+                       get(SQLFunction::create('COUNT', '*')->setAlias('count'))
+                   );
 
             return
                 $this->cacheByQuery(

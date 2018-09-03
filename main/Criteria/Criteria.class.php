@@ -324,8 +324,9 @@ final class Criteria extends QueryIdentification
     {
         try {
             $list = array(
-                $this->checkAndGetDao()->
-                getByQuery($this->toSelectQuery())
+                $this
+                ->checkAndGetDao()
+                ->getByQuery($this->toSelectQuery())
             );
         } catch (ObjectNotFoundException $e) {
             if (!$this->isSilent())
