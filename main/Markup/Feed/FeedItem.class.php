@@ -25,6 +25,12 @@ class FeedItem
     private $category   = null;
     private $enclosure  = null;
 
+    /**
+     * @var null|bool add & set permaLink attr to guid element
+     * null - do not add, true - true, false - false
+     */
+    private $permaLink  = null;
+
     /** @var string */
     private $author     = null;
 
@@ -185,6 +191,16 @@ class FeedItem
         $this->author = $author;
 
         return $this;
+    }
+
+    public function getPermaLink()
+    {
+        return $this->permaLink;
+    }
+
+    public function setPermaLink($permaLink)
+    {
+        $this->permaLink = $permaLink;
     }
 }
 ?>
