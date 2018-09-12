@@ -9,144 +9,144 @@
  *                                                                         *
  ***************************************************************************/
 
-	/**
-	 * Image uploads helper.
-	 * 
-	 * @ingroup Primitives
-	**/
-	namespace Onphp;
+/**
+ * Image uploads helper.
+ *
+ * @ingroup Primitives
+ **/
+namespace Onphp;
 
-	final class PrimitiveImage extends PrimitiveFile
-	{
-		private $width		= null;
-		private $height		= null;
-		
-		private $maxWidth	= null;
-		private $minWidth	= null;
-		
-		private $maxHeight	= null;
-		private $minHeight	= null;
-		
-		private $type		= null;
-		
-		/**
-		 * @return \Onphp\PrimitiveImage
-		**/
-		public function clean()
-		{
-			$this->width = $this->height = null;
-			
-			$this->type = null;
-			
-			return parent::clean();
-		}
-		
-		public function getWidth()
-		{
-			return $this->width;
-		}
-		
-		public function getHeight()
-		{
-			return $this->height;
-		}
-		
-		public function getType()
-		{
-			return $this->type;
-		}
+final class PrimitiveImage extends PrimitiveFile
+{
+    private $width              = null;
+    private $height             = null;
 
-		/**
-		 * @return \Onphp\PrimitiveImage
-		**/
-		public function setMaxWidth($max)
-		{
-			$this->maxWidth = $max;
-			
-			return $this;
-		}
-		
-		public function getMaxWidth()
-		{
-			return $this->maxWidth;
-		}
-		
-		/**
-		 * @return \Onphp\PrimitiveImage
-		**/
-		public function setMinWidth($min)
-		{
-			$this->minWidth = $min;
-			
-			return $this;
-		}
-		
-		public function getMinWidth()
-		{
-			return $this->minWidth;
-		}
-		
-		/**
-		 * @return \Onphp\PrimitiveImage
-		**/
-		public function setMaxHeight($max)
-		{
-			$this->maxHeight = $max;
-			
-			return $this;
-		}
-		
-		public function getMaxHeight()
-		{
-			return $this->maxHeight;
-		}
-		
-		/**
-		 * @return \Onphp\PrimitiveImage
-		**/
-		public function setMinHeight($min)
-		{
-			$this->minHeight = $min;
-			
-			return $this;
-		}
-		
-		public function getMinHeight()
-		{
-			return $this->minHeight;
-		}
-		
-		public function import($scope)
-		{
-			if (!$result = parent::import($scope))
-				return $result;
-			
-			try {
-				list($width, $height, $type) = getimagesize($this->value);
-			} catch (BaseException $e) {
-				// bad luck
-				return false;
-			}
-			
-			if (!$width || !$height || !$type) {
-				$this->value = null;
-				return false;
-			}
-			
-			if (
-				!($this->maxWidth && ($width > $this->maxWidth))
-				&& !($this->minWidth && ($width < $this->minWidth))
-				&& !($this->maxHeight && ($height > $this->maxHeight))
-				&& !($this->minHeight && ($height < $this->minHeight))
-			) {
-				$this->type = new ImageType($type);
-				$this->width = $width;
-				$this->height = $height;
-				
-				return true;
-			}
-			
-			return false;
-		}
-	}
+    private $maxWidth   = null;
+    private $minWidth   = null;
+
+    private $maxHeight  = null;
+    private $minHeight  = null;
+
+    private $type               = null;
+
+    /**
+     * @return \Onphp\PrimitiveImage
+     **/
+    public function clean()
+    {
+        $this->width = $this->height = null;
+
+        $this->type = null;
+
+        return parent::clean();
+    }
+
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return \Onphp\PrimitiveImage
+     **/
+    public function setMaxWidth($max)
+    {
+        $this->maxWidth = $max;
+
+        return $this;
+    }
+
+    public function getMaxWidth()
+    {
+        return $this->maxWidth;
+    }
+
+    /**
+     * @return \Onphp\PrimitiveImage
+     **/
+    public function setMinWidth($min)
+    {
+        $this->minWidth = $min;
+
+        return $this;
+    }
+
+    public function getMinWidth()
+    {
+        return $this->minWidth;
+    }
+
+    /**
+     * @return \Onphp\PrimitiveImage
+     **/
+    public function setMaxHeight($max)
+    {
+        $this->maxHeight = $max;
+
+        return $this;
+    }
+
+    public function getMaxHeight()
+    {
+        return $this->maxHeight;
+    }
+
+    /**
+     * @return \Onphp\PrimitiveImage
+     **/
+    public function setMinHeight($min)
+    {
+        $this->minHeight = $min;
+
+        return $this;
+    }
+
+    public function getMinHeight()
+    {
+        return $this->minHeight;
+    }
+
+    public function import($scope)
+    {
+        if (!$result = parent::import($scope))
+            return $result;
+
+        try {
+            list($width, $height, $type) = getimagesize($this->value);
+        } catch (BaseException $e) {
+            // bad luck
+            return false;
+        }
+
+        if (!$width || !$height || !$type) {
+            $this->value = null;
+            return false;
+        }
+
+        if (
+            !($this->maxWidth && ($width > $this->maxWidth))
+            && !($this->minWidth && ($width < $this->minWidth))
+            && !($this->maxHeight && ($height > $this->maxHeight))
+            && !($this->minHeight && ($height < $this->minHeight))
+        ) {
+            $this->type = new ImageType($type);
+            $this->width = $width;
+            $this->height = $height;
+
+            return true;
+        }
+
+        return false;
+    }
+}
 ?>
