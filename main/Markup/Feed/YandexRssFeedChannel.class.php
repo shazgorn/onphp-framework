@@ -18,7 +18,7 @@ class YandexRssFeedChannel extends FeedChannel
     protected $liveInternetAnalytics;
 
     /**
-     * @var string
+     * @var array
      * News.Yandex supports multiple yandex.metrika codes
      * but this property for single code only
      **/
@@ -135,9 +135,9 @@ class YandexRssFeedChannel extends FeedChannel
      * @param $yandexAnalytics
      * @return $this
      */
-    public function setYandexAnalytics($yandexAnalytics)
+    public function addYandexAnalytics($yandexAnalytics)
     {
-        $this->yandexAnalytics = $yandexAnalytics;
+        $this->yandexAnalytics[] = $yandexAnalytics;
 
         return $this;
     }

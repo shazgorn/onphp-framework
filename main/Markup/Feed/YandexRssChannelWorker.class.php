@@ -88,8 +88,11 @@ class YandexRssChannelWorker extends Singleton implements FeedChannelWorker
                '<yandex:analytics type="LiveInternet" params="' . $channel->getLiveInternetAnalytics() . '"></yandex:analytics>'
                : null)
             . ($channel->getYandexAnalytics()
-               ?
-               '<yandex:analytics type="Yandex" id="' . $channel->getYandexAnalytics() . '"></yandex:analytics>'
+               ? implode(array_map(
+                   function($id) {
+                       return '<yandex:analytics type="Yandex" id="' . $id . '"></yandex:analytics>';
+                   }, $channel->getYandexAnalytics()
+               ))
                : null)
             . ($channel->getYandexAdNetworkId()
                ?
