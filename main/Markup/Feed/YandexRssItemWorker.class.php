@@ -128,6 +128,11 @@ final class YandexRssItemWorker extends Singleton implements FeedItemWorker
                 : null
             )
             .(
+                $item->getEnclosure()
+                ? '<enclosure url="' . $item->getEnclosure()->getUrl() . '" type="' . $item->getEnclosure()->getType() . '"/>'
+                : ''
+            )
+            .(
                 count($item->getRelated())
                 ? (
                     '<yandex:related' . ($item->getRelatedInfinity() ? ' type="infinity"' : '') . '>'
