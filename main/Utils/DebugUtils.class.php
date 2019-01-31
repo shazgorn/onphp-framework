@@ -19,6 +19,10 @@ final class DebugUtils extends StaticFactory
     private static $memoryAccumulator = 0;
     private static $currentMemory = null;
 
+    /**
+     * Helper function for trace()
+     * Format debug line
+     */
     public static function traceLine($i, $line)
     {
         $error = '#' . $i . ($i < 10 ? ' ' : '');
@@ -46,6 +50,9 @@ final class DebugUtils extends StaticFactory
         return $error;
     }
 
+    /**
+     * Pretty print debug backtrace
+     */
     public static function trace()
     {
         foreach (debug_backtrace() as $i => $line) {
@@ -53,7 +60,11 @@ final class DebugUtils extends StaticFactory
         }
     }
 
-    public static function edump($e)
+    /**
+     * Pretty print Exception
+     * @param \Exception $e
+     */
+    public static function edump($e, $return = false)
     {
         $error = "#E " . __METHOD__ . '()';
         $dbt = debug_backtrace()[1] ?? debug_backtrace()[0];
@@ -69,7 +80,11 @@ final class DebugUtils extends StaticFactory
         foreach ($e->getTrace() as $i => $line) {
             $error .= static::traceLine($i, $line);
         }
-        echo $error;
+        if ($return) {
+            return $error;
+        } else {
+            echo $error;
+        }
     }
 
     public static function el($vr, $prefix = null)
@@ -79,7 +94,7 @@ final class DebugUtils extends StaticFactory
             $prefix = basename($trace[0]['file']).':'.$trace[0]['line'];
         }
 
-        error_log($prefix.': '.var_export($vr, true));
+        error_log($prefix.': ' . var_export($vr, true));
     }
 
     public static function ev($vr, $prefix = null)
