@@ -1385,9 +1385,9 @@ final class MetaConfiguration extends Singleton implements Instantiatable
         if ($public = $info->getProperties(\ReflectionProperty::IS_PUBLIC)) {
             Assert::isUnreachable(
                 $class->getName()
-                .' contains properties with evil visibility:'
-                ."\n"
-                .print_r($public, true)
+                . ' contains properties with evil visibility:'
+                . "\n"
+                . print_r($public, true)
             );
         }
 
