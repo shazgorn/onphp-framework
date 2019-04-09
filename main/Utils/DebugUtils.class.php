@@ -18,6 +18,7 @@ final class DebugUtils extends StaticFactory
 {
     private static $memoryAccumulator = 0;
     private static $currentMemory = null;
+    private static $start = null;
 
     /**
      * Helper function for trace()
@@ -66,7 +67,7 @@ final class DebugUtils extends StaticFactory
      */
     public static function edump($e, $return = false)
     {
-        $error = "#E " . __METHOD__ . '()';
+        $error = "#E  " . __METHOD__ . '()';
         $dbt = debug_backtrace()[1] ?? debug_backtrace()[0];
         if (isset($dbt['file']) && isset($dbt['line'])) {
             $error .= ' ' . $dbt['file'] . '(' . $dbt['line'] . '): ';
@@ -76,7 +77,7 @@ final class DebugUtils extends StaticFactory
         }
         $error .= $dbt['function'] . '()';
         $error .= "\n";
-        $error .= "#M " . get_class($e) . '(' . $e->getMessage() . ")\n";
+        $error .= "#M  " . get_class($e) . '(' . $e->getMessage() . ")\n";
         foreach ($e->getTrace() as $i => $line) {
             $error .= static::traceLine($i, $line);
         }
@@ -134,10 +135,20 @@ final class DebugUtils extends StaticFactory
         );
     }
 
-    public static function microtime()
+    public static function microtime($mtime = null)
     {
-        list($usec, $sec) = explode(' ', microtime(), 2);
+        list($usec, $sec) = explode(' ', $mtime ?: microtime(), 2);
         return ((float) $usec + (float) $sec);
+    }
+
+    public static function start()
+    {
+        self::$start = microtime(true);
+    }
+
+    public static function mark()
+    {
+        return microtime(true) - self::$start;
     }
 
     public static function setMemoryCounter()
